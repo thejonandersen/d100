@@ -1,0 +1,104 @@
+model Character {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?   @db.ObjectId
+  name        String?
+  race        Race?     @relation(fields: [raceid], references: [id])
+  raceid      String?   @db.ObjectId
+  stats       StatBlock
+  skills      Skills
+  currentHP   Int
+  currentPP   Int
+  points      Int
+  pointsSpent Int
+  languages   String[]
+}
+
+type StatBlock {
+  str RacialStat
+  con RacialStat
+  siz RacialStat
+  int RacialStat
+  pow RacialStat
+  dex RacialStat
+  chr RacialStat
+}
+
+type RacialStat {
+  minimum Int @default(3)
+  maximum Int @default(3)
+  current Int @default(3)
+}
+
+type AthleticsSkills {
+  base       Int @default(0)
+  acrobatics Int @default(0)
+  dodge      Int @default(0)
+  pilot      Int @default(0)
+  stealth    Int @default(0)
+}
+
+type PowersSkills {
+  base       Int @default(0)
+  divination Int @default(0)
+  energy     Int @default(0)
+  life       Int @default(0)
+  mind       Int @default(0)
+  planar     Int @default(0)
+}
+
+type CombatSkills {
+  base           Int @default(0)
+  axes_and_picks Int @default(0)
+  blade          Int @default(0)
+  bludgeoning    Int @default(0)
+  natural        Int @default(0)
+  projectile     Int @default(0)
+  shield         Int @default(0)
+  staff_weapons  Int @default(0)
+}
+
+type InteractionSkills {
+  base         Int @default(0)
+  chicanery    Int @default(0)
+  command      Int @default(0)
+  diplomacy    Int @default(0)
+  fast-talking Int @default(0)
+}
+
+type ProfessionSkills {
+  base       Int              @default(0)
+  knownTypes ProfessionType[]
+}
+
+type ProfessionType {
+  base Int    @default(0)
+  name String
+}
+
+type LoreSkills {
+  base       Int @default(0)
+  arcana     Int @default(0)
+  nature     Int @default(0)
+  history    Int @default(0)
+  social     Int @default(0)
+  technology Int @default(0)
+}
+
+type ObservationSkills {
+  base       Int @default(0)
+  appraise   Int @default(0)
+  insight    Int @default(0)
+  navigate   Int @default(0)
+  perception Int @default(0)
+}
+
+type Skills {
+  athletics   AthleticsSkills
+  powers      PowersSkills
+  combat      CombatSkills
+  interaction InteractionSkills
+  profession  PowersSkills
+  lore        LoreSkills
+  observation ObservationSkills
+}
