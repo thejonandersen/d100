@@ -34,10 +34,14 @@ const initialState: UserState = {
 export const login = createAsyncThunk(
     "user/login",
     async ({email, password}: LoginPayload, thunkAPI) => {
-        console.log("called");
-        const response: any = await API.post("login", {email, password});
-        console.log({response});
-        return response;
+        try {
+            const response: any = await API.post("login", {email, password});
+            console.log({response});
+            return response;
+        } catch (e: any) {
+            console.error(e.message);
+            return Promise.reject()
+        }
     });
 
 const userSlice = createSlice({
