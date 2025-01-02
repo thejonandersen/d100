@@ -1,6 +1,6 @@
 import React from 'react'
 import {Navigate} from 'react-router';
-import {User} from '../features/user/slice'
+import {User} from '../state/user/slice'
 
 interface ProtectedRouteParams {
     user: User,

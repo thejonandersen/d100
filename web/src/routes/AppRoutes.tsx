@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import {Route, Routes} from "react-router";
-import {useAppSelector} from '../app/hooks';
+import {useAppSelector} from '../state/hooks';
 import {useLocation, useNavigate} from 'react-router';
-import {Login} from '../features/user/login';
+import {Login} from '../pages/Login';
 import {ProtectedRoute} from './ProtectedRoute';
-import {User} from '../features/user/slice'
+import {User} from '../state/user/slice'
 
 export const AppRoutes = () => {
     const user = useAppSelector(state => state.user)

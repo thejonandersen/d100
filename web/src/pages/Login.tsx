@@ -1,9 +1,9 @@
 import React from "react";
-import {login, LoginPayload} from "./slice";
-import {useAppDispatch} from "../../app/hooks";
+import {login, LoginPayload} from "../state/user/slice";
+import {useAppDispatch} from "../state/hooks";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {Button, Card, CardActions, CardHeader, Container, Stack, TextField} from "@mui/material";
-import "../../App.css";
+import "../App.css";
 
 export const Login: React.FC = () => {
     const {
