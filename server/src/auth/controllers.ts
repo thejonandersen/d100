@@ -77,7 +77,7 @@ export const login: RequestHandler = async (req: Request, res: Response): Promis
         }, res);
     }
 
-    if (bcrypt.compareSync(password, user.password)) {
+    if (bcrypt.compareSync(password, user.password as string)) {
         const token = jwt.sign(
             {
                 id: user.id

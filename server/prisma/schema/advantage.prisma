@@ -1,0 +1,47 @@
+model Advantage {
+  id           String                 @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  races        Race[]                 @relation(fields: [raceIds], references: [id])
+  raceIds      String[]               @db.ObjectId
+  characters   Character[]            @relation(fields: [characterIds], references: [id])
+  characterIds String[]               @db.ObjectId
+  category     AdvantageCategory
+  requirements AdvantageRequirement[]
+  cost         Int                    @default(0)
+  description  String
+  special      Json                   @default("{}")
+}
+
+type AdvantageRequirement {
+  type        AdvantageRequirementType
+  skill       Skill?
+  power       Power?
+  stat        StatName?
+  raceId      String?                  @db.ObjectId
+  advantageId String?                  @db.ObjectId
+  value       Int                      @default(0)
+}
+
+enum AdvantageRequirementType {
+  stat
+  skill
+  tier
+  power_pool
+  race
+  advantage
+}
+
+enum AdvantageCategory {
+  Ally_Framework
+  Archetype
+  Armor
+  Body
+  Divine_Pacts
+  Epic_Archetypes
+  Golden_Path
+  Melee_Combat
+  Mind
+  Power
+  Ranged_Combat
+  Tactical
+}

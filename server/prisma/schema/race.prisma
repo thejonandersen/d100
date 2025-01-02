@@ -1,16 +1,17 @@
 model Race {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  stats       StatBlock
-  advantages  String[]
-  cost        Int
-  move        Int        @default(0)
-  languageIds String[]   @db.ObjectId
-  languages   Language[] @relation(fields: [languageIds], references: [id])
-  raceTypeIds String[]   @db.ObjectId
-  raceTypes   RaceType[] @relation(fields: [raceTypeIds], references: [id])
-
-  Character Character[]
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  stats        StatBlock
+  cost         Int         @default(0)
+  move         Int         @default(0)
+  languageIds  String[]    @db.ObjectId
+  languages    Language[]  @relation(fields: [languageIds], references: [id])
+  raceTypeIds  String[]    @db.ObjectId
+  raceTypes    RaceType[]  @relation(fields: [raceTypeIds], references: [id])
+  special      Json        @default("{}")
+  Character    Character[]
+  advantages   Advantage[] @relation(fields: [advantageIds], references: [id])
+  advantageIds String[]    @db.ObjectId
 }
 
 model RaceType {
