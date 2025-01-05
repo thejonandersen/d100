@@ -4,6 +4,7 @@ const GetSchema = z.object({
     limit: z.number().optional(),
     page: z.number().optional(),
     fields: z.string().optional(),
+    orderBy: z.array(z.string()).optional(),
 });
 
 export type GetQuery = z.infer<typeof GetSchema>

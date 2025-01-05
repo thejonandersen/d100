@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {Route, Routes} from "react-router";
 import {useAppSelector} from '../state/hooks';
 import {useLocation, useNavigate} from 'react-router';
-import {Login, Home, Advantage, Race, Character, Language} from '../pages/';
+import {Login, Home, Advantage, Race, Character, Language, CreateAdvantage} from '../pages/';
 import {User as UserPage} from '../pages/User';
 import {ProtectedRoute} from './ProtectedRoute';
 import {User} from '../state/user/slice'
@@ -27,9 +27,14 @@ export const AppRoutes = () => {
                         <Home />
                     </ProtectedRoute>
                 }/>
-                <Route path="advantage" element={
+                <Route path="/advantage" element={
                     <ProtectedRoute user={user.current as User}>
                         <Advantage />
+                    </ProtectedRoute>
+                } />
+                <Route path="/advantage/create" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <CreateAdvantage />
                     </ProtectedRoute>
                 }/>
                 <Route path="character" element={
