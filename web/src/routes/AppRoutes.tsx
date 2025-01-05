@@ -5,19 +5,22 @@ import {useLocation, useNavigate} from 'react-router';
 import {Login, Home, Advantage, Race, Character, Language} from '../pages/';
 import {User as UserPage} from '../pages/User';
 import {ProtectedRoute} from './ProtectedRoute';
-import {User} from '../state/user/slice'
+import {User, isTokenValid} from '../state/user/slice'
 import {Container} from '@mui/material'
 
 export const AppRoutes = () => {
     const user = useAppSelector(state => state.user)
     const location = useLocation();
     const navigate = useNavigate();
+    const tokenValid = isTokenValid();
+
+    console.log({ tokenValid })
 
     useEffect(() => {
         if (user.current && location.pathname === '/login') {
             navigate('/');
         }
-    }, [user])
+    }, [user, tokenValid])
 
     return (
         <Container>

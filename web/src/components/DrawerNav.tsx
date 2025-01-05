@@ -97,7 +97,7 @@ export function DrawerNav() {
                     {links.map((link) => (
                         <>
                             <ListItem key={link.uri} disablePadding>
-                                <ListItemButton onClick={() => navigate(link.uri)}>
+                                <ListItemButton key={`${link.uri}_button`} onClick={() => navigate(link.uri)}>
                                     <ListItemIcon>
                                         <IconResolver iconName={link.icon}/>
                                     </ListItemIcon>
@@ -107,8 +107,8 @@ export function DrawerNav() {
                                 </ListItemButton>
                             </ListItem>
                             {link.children && link.children.map(child => (
-                                <ListItem key={`${link.uri}/${child.uri}`} disablePadding>
-                                    <ListItemButton onClick={() => navigate(`${link.uri}/${child.uri}`)}>
+                                <ListItem key={`${link.uri}_${child.uri}`} disablePadding>
+                                    <ListItemButton key={`${link.uri}_${child.uri}_button`} onClick={() => navigate(`${link.uri}/${child.uri}`)}>
                                         <ListItemIcon>
                                             <IconResolver iconName={child.icon}/>
                                         </ListItemIcon>

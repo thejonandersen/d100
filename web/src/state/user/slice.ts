@@ -1,6 +1,8 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSelector, createSlice} from "@reduxjs/toolkit";
 import z from "zod";
 import {API} from "../../common/axios";
+import type {RootState} from '../store'
+import {jwtDecode} from 'jwt-decode'
 
 export type User = {
     id: String;
@@ -53,6 +55,10 @@ const userSlice = createSlice({
             localStorage.setItem("user", "");
             state.token = null;
             state.current = null;
+        },
+        newToken: (state, payload: any) => {
+            localStorage.setItem('token', payload.token);
+            state.token = payload.token;
         }
     },
     extraReducers: builder => {
@@ -81,6 +87,18 @@ const userSlice = createSlice({
     }
 });
 
-export const {logout} = userSlice.actions;
+export const {logout, newToken} = userSlice.actions;
+
+export const isTokenValid = () => createSelector(
+    [(state: RootState) => state.user],
+    (user): boolean => {
+        console.log('called')
+        if (!user.token)
+            return false;
+        const parsed = jwtDecode(user.token as string);
+        console.log(parsed);
+        return true
+    }
+)
 
 export default userSlice.reducer;
