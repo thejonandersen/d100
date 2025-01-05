@@ -89,16 +89,4 @@ const userSlice = createSlice({
 
 export const {logout, newToken} = userSlice.actions;
 
-export const isTokenValid = () => createSelector(
-    [(state: RootState) => state.user],
-    (user): boolean => {
-        console.log('called')
-        if (!user.token)
-            return false;
-        const parsed = jwtDecode(user.token as string);
-        console.log(parsed);
-        return true
-    }
-)
-
 export default userSlice.reducer;
