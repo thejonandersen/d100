@@ -35,5 +35,5 @@ API.interceptors.response.use(response => {
     console.log(response.data.message);
     return response.data.responseObject;
 }, error => {
-    console.log(error);
+    throw new Error(error.response.data.message);
 });

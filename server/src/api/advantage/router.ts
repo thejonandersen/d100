@@ -1,8 +1,8 @@
 import express, {type Router} from "express";
 
-import {CreateAdvantageSchema} from "./models";
+import {CreateAdvantageRequestSchema, UpdateAdvantageRequestSchema} from "d100-libs";
 import {validateRequest} from "@/common/utils/httpHandlers";
-import {GetSchema} from "@/common/models/";
+import {GetSchema, GetByIdSchema} from "@/common/models/";
 import crud from "@/common/utils/createRequestHandlers";
 
 export const {get, getById, create, update, remove} = crud("advantage");
@@ -11,10 +11,10 @@ export const {get, getById, create, update, remove} = crud("advantage");
 const router: Router = express.Router();
 
 router.get("/", validateRequest(GetSchema), get);
-router.get("/:id", validateRequest(GetSchema), getById);
+router.get("/:id", validateRequest(GetByIdSchema), getById);
 
-router.post("/", validateRequest(CreateAdvantageSchema), create);
-router.post("/:id", validateRequest(CreateAdvantageSchema), update);
-router.delete("/:id", validateRequest(CreateAdvantageSchema), remove);
+router.post("/", validateRequest(CreateAdvantageRequestSchema), create);
+router.post("/:id", validateRequest(UpdateAdvantageRequestSchema), update);
+router.delete("/:id", validateRequest(GetByIdSchema), remove);
 
 export default router;

@@ -11,9 +11,9 @@ function App() {
         <div>
             <CssBaseline/>
             <Header/>
-            <DrawerNav/>
             <Box className="app-content-box">
                 <BrowserRouter>
+                    <DrawerNav/>
                     <AppRoutes/>
                 </BrowserRouter>
             </Box>

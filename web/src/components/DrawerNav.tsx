@@ -1,50 +1,123 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import {
+    Box,
+    Drawer,
+    List,
+    Divider,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText
+} from '@mui/material';
+
+import {MoveToInbox, Mail} from '@mui/icons-material';
 
 import {useAppSelector, useAppDispatch} from '../state/hooks';
 import {toggle} from '../state/drawer/slice';
+import {useNavigate} from 'react-router'
+import IconResolver from './IconResolver'
+import Typography from '@mui/material/Typography'
+
+type DrawerLink = {
+    label: string;
+    uri: string;
+    icon: string;
+    children?: DrawerLink[];
+}
 
 export function DrawerNav() {
     const open = useAppSelector(state => state.drawer.open);
     const dispatch = useAppDispatch();
     const dispatchToggle = () => dispatch(toggle(null));
+    const navigate = useNavigate();
+    const links: DrawerLink[] = [
+        {
+            label: 'Advantage',
+            uri: 'advantage',
+            icon: 'RocketLaunch',
+            children: [
+                {
+                    label: 'Create',
+                    uri: 'create',
+                    icon: 'Add',
+                },
+                {
+                    label: 'Edit',
+                    uri: 'edit',
+                    icon: 'Edit',
+                }
+            ],
+        },
+        {
+            label: 'Add Language',
+            uri: 'language',
+            icon: 'RecordVoiceOver'
+        },
+        {
+            label: 'Race',
+            uri: 'race',
+            icon: 'Diversity2',
+            children: [
+                {
+                    label: 'Create',
+                    uri: 'create',
+                    icon: 'Add',
+                },
+                {
+                    label: 'Edit',
+                    uri: 'edit',
+                    icon: 'Edit',
+                }
+            ],
+        },
+        {
+            label: 'Character',
+            uri: 'character',
+            icon: 'Face',
+            children: [
+                {
+                    label: 'Create',
+                    uri: 'create',
+                    icon: 'Add',
+                },
+                {
+                    label: 'Edit',
+                    uri: 'edit',
+                    icon: 'Edit',
+                }
+            ],
+        },
+    ]
 
+    // menu view/create/edit
     return (
         <Drawer open={open} onClose={dispatchToggle}>
-            <Box sx={{ width: 250 }} role="presentation" onClick={dispatchToggle}>
+            <Box sx={{width: 250}} role="presentation">
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
+                    {links.map((link) => (
+                        <>
+                            <ListItem key={link.uri} disablePadding>
+                                <ListItemButton onClick={() => navigate(link.uri)}>
+                                    <ListItemIcon>
+                                        <IconResolver iconName={link.icon}/>
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant="h6" fontWeight="bold">{link.label}</Typography>
+                                    }/>
+                                </ListItemButton>
+                            </ListItem>
+                            {link.children && link.children.map(child => (
+                                <ListItem key={`${link.uri}/${child.uri}`} disablePadding>
+                                    <ListItemButton onClick={() => navigate(`${link.uri}/${child.uri}`)}>
+                                        <ListItemIcon>
+                                            <IconResolver iconName={child.icon}/>
+                                        </ListItemIcon>
+                                        <ListItemText primary={child.label}/>
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                            <Divider/>
+                        </>
                     ))}
                 </List>
             </Box>
