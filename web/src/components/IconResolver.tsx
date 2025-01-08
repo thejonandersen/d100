@@ -3,6 +3,7 @@ import * as Icons from '@mui/icons-material';
 
 interface IconResolverProps {
     iconName: string,
+    [key: string]: any;
 }
 
 const IconResolver: React.FC<IconResolverProps> = ({ iconName, ...rest }) => {
