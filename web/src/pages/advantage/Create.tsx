@@ -42,6 +42,7 @@ export const CreateAdvantage = () => {
                 <Form
                     schema={CreateAdvantageSchema}
                     onSubmit={handler}
+                    api={API}
                 />
             </Card>
             <Zoom in={!!severity}>

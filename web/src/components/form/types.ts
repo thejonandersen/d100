@@ -1,81 +1,84 @@
 import {z, ZodTypeAny} from "zod";
 import {Control, FieldErrors, UseFieldArrayRemove, UseFieldArrayUpdate} from 'react-hook-form'
 import React from 'react'
-import {ConditionalTemplate} from './Templates'
-
-export type FormProps = {
-  schema: z.ZodObject<any>;
-  initialData?: { [key: string]: unknown };
-  onSubmit?: (data: { [key: string]: unknown }) => void;
-  onError?: (errors: z.ZodIssue[], data?: { [key: string]: unknown }) => void;
-  templates?: Templates;
-  formRoot?: React.FC<FormRootProps>;
-  readonly?: boolean;
-};
+import {AxiosInstance} from 'axios'
 
 export type FormRootProps = {
-  schema: z.ZodTypeAny;
-  onSubmit: (data: any) => any;
+    schema: z.ZodTypeAny;
+    onSubmit: (data: any) => any;
+    api?: AxiosInstance;
+    debug?: boolean;
 };
 
 type BaseTemplateProps = {
-  errors: FieldErrors;
-  control: Control;
-  name?: string;
-  parent?: string;
-  props?: any;
+    errors: FieldErrors;
+    control: Control;
+    name?: string;
+    parent?: string;
+    props?: any;
 }
 
 export type StringTemplateProps = {
-  schema: z.ZodString | z.ZodDate | z.ZodEnum<any>
+    schema: z.ZodString | z.ZodDate | z.ZodEnum<any>
 } & BaseTemplateProps;
 
 export type NumberTemplateProps = {
-  schema: z.ZodNumber;
+    schema: z.ZodNumber;
 } & BaseTemplateProps;
 
 export type UnionTemplateProps = {
-  schema: z.ZodUnion<any>;
+    schema: z.ZodUnion<any>;
 } & BaseTemplateProps;
 
 export type ObjectTemplateProps = {
-  schema: z.ZodObject<any>;
+    schema: z.ZodObject<any>;
 } & BaseTemplateProps;
 
 export type BooleanTemplateProps = {
-  schema: z.ZodBoolean;
+    schema: z.ZodBoolean;
 } & BaseTemplateProps;
 
 export type ArrayTemplateProps = {
-  schema: z.ZodArray<any>;
+    schema: z.ZodArray<any>;
 } & BaseTemplateProps;
 
-export type ConditionalTemplateProps  = {
-  schema: ZodTypeAny;
+export type ConditionalTemplateProps = {
+    schema: ZodTypeAny;
 } & BaseTemplateProps
 
+type DynamicSelectionProps = {
+    endpoint: string;
+    selectionKey: string;
+}
+
+export type AsyncSelectionTemplateProps = BaseTemplateProps & {
+    schema: z.ZodString;
+    props: DynamicSelectionProps
+}
+
 export type ArrayItemProps = ConditionalTemplateProps & {
-  index: number;
-  update: UseFieldArrayUpdate<any, any>;
-  value: any;
-  remove: UseFieldArrayRemove;
+    index: number;
+    update: UseFieldArrayUpdate<any, any>;
+    value: any;
+    remove: UseFieldArrayRemove;
 }
 
 export type Templates = {
-  StringTemplate: React.FC<StringTemplateProps>;
-  NumberTemplate: React.FC<NumberTemplateProps>;
-  UnionTemplate: React.FC<UnionTemplateProps>;
-  ObjectTemplate: React.FC<ObjectTemplateProps>;
-  BooleanTemplate: React.FC<BooleanTemplateProps>;
-  ArrayTemplate: React.FC<ArrayTemplateProps>;
-  ConditionalTemplate: React.FC<ConditionalTemplateProps>;
+    StringTemplate: React.FC<StringTemplateProps>;
+    NumberTemplate: React.FC<NumberTemplateProps>;
+    UnionTemplate: React.FC<UnionTemplateProps>;
+    ObjectTemplate: React.FC<ObjectTemplateProps>;
+    BooleanTemplate: React.FC<BooleanTemplateProps>;
+    ArrayTemplate: React.FC<ArrayTemplateProps>;
+    ConditionalTemplate: React.FC<ConditionalTemplateProps>;
+    AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps>;
 };
 
 export interface RenderTemplateProps {
-  schema: z.ZodTypeAny;
-  errors: FieldErrors;
-  control: Control;
-  name?: string;
-  parent?: string;
-  props?: any;
+    schema: z.ZodTypeAny;
+    errors: FieldErrors;
+    control: Control;
+    name?: string;
+    parent?: string;
+    props?: any;
 }
