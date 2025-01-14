@@ -10,20 +10,34 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
     control,
     name,
     parent,
-    props
+    props,
+    initialData,
 }) => {
+    if (name === 'id') {
+        return null;
+    }
     const resolvedSchema = mapToPrimaryType(resolveSchema(schema));
-    if (resolvedSchema.description) {
+    if (resolvedSchema.description || schema.description) {
+        const description: string = resolvedSchema.description || schema.description || '{}';
         try {
-            const {template, ...rest} = JSON.parse(resolvedSchema.description);
+            const {template, ...rest} = JSON.parse(description);
+
+            if (template === 'none') {
+                return null;
+            }
+
             if (template === 'Conditional') {
                 return <Templates.ConditionalTemplate schema={resolvedSchema} errors={errors} control={control}
-                                                      name={name} parent={parent} props={rest}/>
+                                                      name={name} parent={parent} props={rest} initialData={initialData}/>;
             }
 
             if (template === 'AsyncSelect') {
                 return <Templates.AsyncSelectionTemplate schema={resolvedSchema as z.ZodString} errors={errors}
-                                                         control={control} name={name} parent={parent} props={rest}/>
+                                                         control={control} name={name} parent={parent} props={rest} initialData={initialData}/>
+            }
+
+            if (template === 'JSON') {
+                return <Templates.JSONStringTemplate errors={errors} control={control} schema={schema} name={name} parent={parent} />
             }
         } catch (e: any) {
             console.log('oops')
@@ -31,30 +45,28 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
         }
     }
 
-    console.log({description: resolvedSchema.description, name})
-
     if (
         resolvedSchema instanceof z.ZodString ||
         resolvedSchema instanceof z.ZodDate ||
         resolvedSchema instanceof z.ZodEnum
     ) {
         return <Templates.StringTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
     } else if (resolvedSchema instanceof z.ZodNumber) {
         return <Templates.NumberTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
-    } else if (resolvedSchema instanceof z.ZodUnion<any>) {
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
+    } else if (resolvedSchema instanceof z.ZodUnion) {
         return <Templates.UnionTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
     } else if (resolvedSchema instanceof z.ZodObject) {
         return <Templates.ObjectTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
     } else if (resolvedSchema instanceof z.ZodArray) {
         return <Templates.ArrayTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
     } else if (resolvedSchema instanceof z.ZodBoolean) {
         return <Templates.BooleanTemplate
-            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props}/>;
+            schema={resolvedSchema} errors={errors} control={control} name={name} parent={parent} props={props} initialData={initialData}/>;
     }
 
     return null

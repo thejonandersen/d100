@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {z} from "zod";
-import {Controller, useFieldArray, useForm, useWatch} from 'react-hook-form'
+import {Control, Controller, Field, FieldValues, useFieldArray, useForm, useWatch} from 'react-hook-form'
 import {
     Box,
     Button,
@@ -18,7 +18,7 @@ import {
 import _ from 'lodash'
 import {RenderTemplate} from './RenderTemplate'
 import {mapToPrimaryType, resolveSchema} from "./utils";
-import type {StringTemplateProps} from './types'
+import {JSONStringTemplateProps, StringTemplateProps} from './types'
 import {
     ArrayItemProps,
     ArrayTemplateProps,
@@ -34,6 +34,7 @@ import {
 import {zodResolver} from '@hookform/resolvers/zod'
 import IconResolver from '../IconResolver'
 import {AxiosInstance} from 'axios'
+import {JsonEditor} from 'json-edit-react'
 
 let API: AxiosInstance;
 const WrapperStyle: React.CSSProperties = {
@@ -48,14 +49,20 @@ const ComplexWrapperStyle: React.CSSProperties = {
     gap: "1rem"
 };
 
+const getFieldValue = (name: string, control: Control<FieldValues, any>): any => {
+    const parsedName: string = name.split('.').pop() || name;
+    const field: Field = control._fields[parsedName as string] as Field;
+    return field?._f.value;
+}
+
 // String Template
-export const StringTemplate: React.FC<StringTemplateProps> = ({errors, control, name, parent}) => {
+export const StringTemplate: React.FC<StringTemplateProps> = ({errors, control, name, parent, initialData}) => {
     const displayName: string = name ? name.split('.').pop() as string : '';
     return (
         <div style={WrapperStyle}>
             <Controller
-                name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
-                defaultValue={""}
+                name={name as string}
+                defaultValue={initialData ? initialData : ""}
                 control={control}
                 rules={{required: `${capitalize(displayName)} is required.`}}
                 render={({field}: any) => (
@@ -79,7 +86,7 @@ export const NumberTemplate: React.FC<NumberTemplateProps> = ({errors, control, 
     return (
         <div style={WrapperStyle}>
             <Controller
-                name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
+                name={name as string}
                 defaultValue={""}
                 control={control}
                 render={({field}: any) => (
@@ -106,7 +113,7 @@ export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, errors, con
     return (
         <div style={WrapperStyle}>
             <Controller
-                name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
+                name={name as string}
                 defaultValue={""}
                 control={control}
                 rules={{required: `${capitalize(displayName)} is required.`}}
@@ -136,7 +143,7 @@ export const BooleanTemplate: React.FC<BooleanTemplateProps> = ({schema, errors,
     return (
         <div style={WrapperStyle}>
             <Controller
-                name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
+                name={name as string}
                 defaultValue={""}
                 control={control}
                 rules={{required: `${capitalize(displayName)} is required.`}}
@@ -164,7 +171,7 @@ export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, errors, c
                             key={`${parent !== undefined ? `${parent}.` : ''}${name}.key`}
                             schema={schema.shape[key]}
                             errors={errors}
-                            name={`${parent !== undefined ? `${parent}.` : ''}${name !== undefined ? `${name}.` : ''}${key}`}
+                            name={key}
                             control={control}
                             parent={parent}
                         />
@@ -183,8 +190,7 @@ const getInnerSchema = (schema: z.ZodArray<any>): z.ZodTypeAny => {
 // Array Item
 const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, value, update, index, remove, control}) => {
     const {
-        formState: {errors, isValid, isSubmitting},
-        handleSubmit,
+        formState: {errors},
         control: subControl
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
@@ -218,6 +224,7 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, value, update, index
                 schema={resolvedSchema}
                 errors={errors}
                 control={subControl}
+                name={displayName}
             />
         </Box>
     )
@@ -226,6 +233,7 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, value, update, index
 // Array Template
 export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, errors, control, name}) => {
     const innerSchema = resolveSchema(getInnerSchema(schema)) as any;
+    console.log({innerSchema: innerSchema.description, schema: schema.description, name})
     const {fields, append, remove, update} = useFieldArray({
         control,
         name: name as string
@@ -237,7 +245,8 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, errors, con
         ...previousValue,
         [key]: null
     }), {}) : {};
-    const displayName: string = name ? name.split('.').pop() as string : '';
+    const displayName: string = name ? name.replace('Id', '').split('.').pop() as string : '';
+    console.log({displayName})
     return (
         <div style={WrapperStyle}>
 
@@ -298,7 +307,7 @@ export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
         conditionMet ? <RenderTemplate
             schema={newSchema}
             errors={errors}
-            name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
+            name={name as string}
             control={control}
             parent={parent}
         /> : null
@@ -311,11 +320,13 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
     props,
     schema,
     errors,
-    parent
+    parent,
 }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [options, setOptions] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+    console.log({name, control, props})
 
     if (!API) {
         throw new Error('to use AsyncSelectionTemplates, you must pass an AxiosInstance as api when creating your Form instance')
@@ -348,7 +359,7 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
 
     return (
         <Controller
-            name={`${parent !== undefined ? `${parent}.` : ''}${name}`}
+            name={name ?? ''}
             defaultValue={""}
             control={control}
             rules={{required: `${capitalize(displayName)} is required.`}}
@@ -376,6 +387,31 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
     );
 }
 
+export const JSONStringTemplate: React.FC<JSONStringTemplateProps> = ({schema, errors, control, name, parent}) => {
+    let initialValue = {};
+    const displayName: string = name ? name.split('.').pop() as string : '';
+    try {
+        const value: string = getFieldValue(name as string, control)
+        if (value)
+            initialValue = JSON.parse(value);
+    } catch (e) {
+        console.error(e);
+    }
+    return (
+        <Controller
+            name={name as string}
+            defaultValue={'{}'}
+            control={control}
+            rules={{required: `${capitalize(displayName)} is required.`}}
+            render={({field}: any) => (
+                <JsonEditor data={initialValue} onUpdate={(data) => {
+                    field.onChange(JSON.stringify(data.newData));
+                }} />
+            )}
+        />
+    )
+}
+
 /**
  * Form component that renders the form based on the schema.
  * @param {FormRootProps} props - The props for the BaseFormRoot.
@@ -383,20 +419,34 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
  */
 export const Form: React.FC<FormRootProps> = ({
     schema,
-    onSubmit,
+    handler,
     api,
-    debug
+    debug,
+    initialData,
+    onChange,
+    isSubMenu
 }) => {
     const {
         formState: {errors, isValid, isSubmitting},
         control,
-        getValues
-    } = useForm<z.infer<typeof schema>>({resolver: zodResolver(schema)});
+        getValues,
+        handleSubmit,
+    } = useForm<z.infer<typeof schema>>({resolver: zodResolver(schema), defaultValues: initialData});
+    const values = useWatch({ control });
     const resolvedSchema = resolveSchema(schema);
     API = api as AxiosInstance;
 
+    useEffect(() => {
+        if (!onChange) {
+            return
+        }
+
+        onChange(values);
+    }, [values])
+
+    console.log({initialData})
     return (
-        <form onSubmit={onSubmit} style={ComplexWrapperStyle}>
+        <form onSubmit={handleSubmit(handler)} style={ComplexWrapperStyle}>
             {isObjectSchema(resolvedSchema) &&
                 Object.keys(resolvedSchema.shape).map((key) => {
                     return (
@@ -409,9 +459,9 @@ export const Form: React.FC<FormRootProps> = ({
                         />
                     )
                 })}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {!isSubMenu && (<Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
                 <Button type="submit" disabled={!isValid || isSubmitting} variant="contained">Submit</Button>
-            </Box>
+            </Box>)}
             {debug && <Button onClick={() => {
                 const values = getValues();
                 console.log({values})
@@ -429,5 +479,6 @@ export const BaseTemplates: Templates = {
     BooleanTemplate,
     ArrayTemplate,
     ConditionalTemplate,
-    AsyncSelectionTemplate
+    AsyncSelectionTemplate,
+    JSONStringTemplate
 };

@@ -32,21 +32,9 @@ export function DrawerNav() {
     const navigate = useNavigate();
     const links: DrawerLink[] = [
         {
-            label: 'Advantage',
+            label: 'Advantages',
             uri: 'advantage',
             icon: 'RocketLaunch',
-            children: [
-                {
-                    label: 'Create',
-                    uri: 'create',
-                    icon: 'Add',
-                },
-                {
-                    label: 'Edit',
-                    uri: 'edit',
-                    icon: 'Edit',
-                }
-            ],
         },
         {
             label: 'Add Language',
@@ -54,38 +42,26 @@ export function DrawerNav() {
             icon: 'RecordVoiceOver'
         },
         {
-            label: 'Race',
+            label: 'Races',
             uri: 'race',
             icon: 'Diversity2',
-            children: [
-                {
-                    label: 'Create',
-                    uri: 'create',
-                    icon: 'Add',
-                },
-                {
-                    label: 'Edit',
-                    uri: 'edit',
-                    icon: 'Edit',
-                }
-            ],
         },
         {
-            label: 'Character',
+            label: 'Characters',
             uri: 'character',
             icon: 'Face',
-            children: [
-                {
-                    label: 'Create',
-                    uri: 'create',
-                    icon: 'Add',
-                },
-                {
-                    label: 'Edit',
-                    uri: 'edit',
-                    icon: 'Edit',
-                }
-            ],
+            // children: [
+            //     {
+            //         label: 'Create',
+            //         uri: 'create',
+            //         icon: 'Add',
+            //     },
+            //     {
+            //         label: 'Edit',
+            //         uri: 'edit',
+            //         icon: 'Edit',
+            //     }
+            // ],
         },
     ]
 
@@ -98,25 +74,15 @@ export function DrawerNav() {
                         <>
                             <ListItem key={link.uri} disablePadding>
                                 <ListItemButton key={`${link.uri}_button`} onClick={() => navigate(link.uri)}>
-                                    <ListItemIcon>
-                                        <IconResolver iconName={link.icon}/>
+                                    <ListItemIcon key={`${link.uri}_icon`}>
+                                        <IconResolver iconName={link.icon} key={link.icon}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={
-                                        <Typography variant="h6" fontWeight="bold">{link.label}</Typography>
+                                    <ListItemText key={`${link.uri}_text`} primary={
+                                        <Typography key={`${link.uri}_typography`} variant="h6" fontWeight="bold">{link.label}</Typography>
                                     }/>
                                 </ListItemButton>
                             </ListItem>
-                            {link.children && link.children.map(child => (
-                                <ListItem key={`${link.uri}_${child.uri}`} disablePadding>
-                                    <ListItemButton key={`${link.uri}_${child.uri}_button`} onClick={() => navigate(`${link.uri}/${child.uri}`)}>
-                                        <ListItemIcon>
-                                            <IconResolver iconName={child.icon}/>
-                                        </ListItemIcon>
-                                        <ListItemText primary={child.label}/>
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                            <Divider/>
+                            <Divider key={`${link.uri}_divider`}/>
                         </>
                     ))}
                 </List>

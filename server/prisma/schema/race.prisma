@@ -1,6 +1,7 @@
 model Race {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   name         String
+  type         String[]    @default(["Humanoid"])
   stats        StatBlock
   cost         Int         @default(0)
   move         Int         @default(0)

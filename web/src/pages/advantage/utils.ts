@@ -49,5 +49,5 @@ export const reqToString = (req: AdvantageRequirement) => {
     const id: string | null = req.type !== 'tier' ?
         req.raceId || req.advantageId || req.power || req.stat || req.skill as string
         : null;
-    return `${capitalize(req.type)}${id && ` ${capitalize(id)}`} ${req.value?.toString()}`
+    return `${capitalize(req.type)}:${id && ` ${capitalize(id)}`} ${req.value?.toString()}`
 }
