@@ -1,9 +1,8 @@
 import {z, ZodTypeAny} from "zod";
-import {Control, FieldErrors, UseFieldArrayRemove, UseFieldArrayUpdate} from 'react-hook-form'
-import React from 'react'
-import {AxiosInstance} from 'axios'
-import {JSONSchema} from 'd100-libs'
-import {JSONStringTemplate} from './Templates'
+import {Control, FieldErrors, UseFieldArrayRemove, UseFieldArrayUpdate} from "react-hook-form";
+import React from "react";
+import {AxiosInstance} from "axios";
+import {JSONSchema} from "d100-libs";
 
 export type FormRootProps = {
     schema: z.ZodTypeAny;
@@ -13,6 +12,8 @@ export type FormRootProps = {
     debug?: boolean;
     initialData?: any;
     isSubMenu?: boolean;
+    columns?: number;
+    labelObjects?: boolean;
 };
 
 type BaseTemplateProps = {
@@ -22,6 +23,8 @@ type BaseTemplateProps = {
     parent?: string;
     props?: any;
     initialData?: any;
+    gridWrap?: boolean;
+    sx?: any;
 }
 
 export type StringTemplateProps = {
