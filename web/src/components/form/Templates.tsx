@@ -510,7 +510,7 @@ export const Form: React.FC<
                     errors={errors}
                     control={control}
                     name={key}
-                    initialData={initialData[key]}
+                    initialData={initialData ? initialData[key]: null}
                     gridWrap={true}
                 />);
             })}
