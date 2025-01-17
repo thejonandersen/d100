@@ -26,7 +26,7 @@ import {resolveSchema} from "../../components/form/utils";
 import IconResolver from '../../components/IconResolver';
 import {useCalculateCost} from './useCalculateCost'
 
-type Race = z.infer<typeof CreateRaceSchema>
+type Race = {id?: string} & z.infer<typeof CreateRaceSchema>
 
 export const CreateOrEditRace = () => {
     const [shouldRender, setShouldRender] = useState<boolean>(false);
@@ -75,7 +75,6 @@ export const CreateOrEditRace = () => {
 
     const handler: SubmitHandler<Race> = async (data: Race) => {
         try {
-            delete data.id;
             const response = await API.post(`race${id ? `/${id}` : ""}`, data);
             openMessages(`Race ${id ? "updated" : "created"}: ${data.name}`, "success");
         } catch (e: any) {
