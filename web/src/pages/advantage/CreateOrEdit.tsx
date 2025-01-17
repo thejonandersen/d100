@@ -6,16 +6,17 @@ import {CreateAdvantageSchema} from 'd100-libs'
 import z from 'zod'
 import {Form} from '../../components/form'
 import {useParams} from 'react-router'
-import {removeEmpty} from '../../components/form/utils'
-
-type Advantage = z.infer<typeof CreateAdvantageSchema>
+import {Advantage, advantageById, loadAdvantages, updateAdvantage, createAdvantage} from '../../state/advantages/slice';
+import {useAppSelector, useAppDispatch} from '../../state/hooks'
 
 export const CreateOrEditAdvantage = () => {
     const [shouldRender, setShouldRender] = useState<boolean>(false)
-    const [initialData, setInitialData] = useState<Advantage>()
+
     const [message, setMessage] = useState<string | null>(null)
     const [severity, setSeverity] = useState<any>()
     const {id} = useParams()
+    const initialData = useAppSelector(state => advantageById(state, id));
+    const dispatch = useAppDispatch();
 
 
     const clearMessages = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -33,37 +34,27 @@ export const CreateOrEditAdvantage = () => {
 
     const handler: SubmitHandler<Advantage> = async (data: Advantage) => {
         try {
-            delete data.id
-            const response = await API.post(`advantage${id ? `/${id}`: ''}`, data);
+            if (id) {
+                await dispatch(updateAdvantage({id, data}));
+            } else {
+                await dispatch(createAdvantage({ data }))
+            }
+
             openMessages(`Advantage ${id ? 'updated':'created'}: ${data.name}`, 'success')
         } catch (e: any) {
             openMessages(e.message, 'error')
         }
     };
 
-    const loadAdvantage = async () => {
-        try {
-            const response = await API.get(`advantage/${id}`);
-            setInitialData(response);
-        } catch (e) {
-
-        }
-    }
-
     useEffect(() => {
-        if (initialData) {
-            setShouldRender(true);
-        }
-    }, [initialData]);
-
-    useEffect(() => {
-        if (!id) {
-            setShouldRender(true)
+        if (!initialData && id) {
+            dispatch(loadAdvantages())
             return
         }
 
-        loadAdvantage();
-    }, [id]);
+        setShouldRender(true)
+
+    }, [initialData]);
 
     return (
         <Container maxWidth="sm">

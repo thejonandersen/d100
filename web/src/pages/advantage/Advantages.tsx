@@ -14,24 +14,25 @@ import {
     Container, Button
 } from '@mui/material'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
-import {CreateAdvantageSchema, AdvantageCategory} from 'd100-libs'
-import z from 'zod'
-import {API} from '../../common/axios'
+import {AdvantageCategory} from 'd100-libs'
 import {advantageCategoryIcons, specialReqsToString, reqToString} from './utils'
 import IconResolver from '../../components/IconResolver'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import {useNavigate, useParams} from 'react-router'
+import {loadAdvantages, allAdvantages} from '../../state/advantages/slice'
+import {useAppSelector, useAppDispatch} from '../../state/hooks'
+import type {Advantage} from '../../state/advantages/slice'
 
-type Advantage = z.infer<typeof CreateAdvantageSchema>
 
-export const Advantage = () => {
-    const [advantages, setAdvantages] = useState<Advantage[]>([])
+export const Advantages = () => {
+    const advantages = useAppSelector(allAdvantages);
     const [categories, setCategories] = useState<AdvantageCategory[]>([])
     const [openCategory, setOpenCategory] = useState<AdvantageCategory|null>()
     const [selected, setSelected] = useState<Advantage|null>();
     const [special, setSpecial] = useState<any>()
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const handleAdvantageClick = (advantage: Advantage) => {
         setSelected(advantage);
@@ -60,25 +61,20 @@ export const Advantage = () => {
         }
     }
 
-    const loadAdvantages = async () => {
-        try {
-            const response = await API.get<Advantage[]>('advantage');
-            const responseCategories: AdvantageCategory[] = [];
-            setAdvantages(response);
-            response.forEach(advantage => {
-                if (!responseCategories.includes(advantage.category)) {
-                    responseCategories.push(advantage.category);
+    useEffect(() => {
+        if (!advantages.length) {
+            dispatch(loadAdvantages());
+        } else {
+            const categories: AdvantageCategory[] = [];
+            advantages.forEach(advantage => {
+                if (!categories.includes(advantage.category)) {
+                    categories.push(advantage.category);
                 }
             });
-            setCategories(responseCategories);
-            setOpenCategory(responseCategories[0]);
-        } catch (e) {
-            console.log(e)
+            setCategories(categories);
+            setOpenCategory(categories[0]);
         }
-    }
-    useEffect(() => {
-        loadAdvantages();
-    }, [])
+    }, [advantages])
     return (
         <Container>
             <Box

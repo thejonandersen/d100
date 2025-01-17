@@ -1,4 +1,4 @@
-export {Advantage} from './advantage/Advantage'
+export {Advantages} from './advantage/Advantages'
 export {CreateOrEditAdvantage} from './advantage/CreateOrEdit';
 export {Character} from './Character'
 export {Home} from './Home'

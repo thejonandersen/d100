@@ -1,8 +1,6 @@
-import {createAsyncThunk, createSelector, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import z from "zod";
 import {API} from "../../common/axios";
-import type {RootState} from '../store'
-import {jwtDecode} from 'jwt-decode'
 
 export type User = {
     id: String;

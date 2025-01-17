@@ -43,6 +43,7 @@ import {JsonEditor} from "json-edit-react";
 let API: AxiosInstance;
 let gridSize: number = 12;
 let shouldLabelObjects = false;
+let globalReplace;
 
 const getFieldValue = (name: string, control: Control<FieldValues, any>): any => {
     const parsedName: string = name.split(".").pop() || name;
@@ -162,12 +163,16 @@ export const UnionTemplate: React.FC<
         console.error(e.message);
     }
 
+    useEffect(() => {
+
+    }, []);
+
     return (
         <GridWrap gridWrap={gridWrap}>
             <StyleWrap sx={sx}>
                 <Controller
                     name={name as string}
-                    defaultValue={initialData ? initialData : ""}
+                    defaultValue={initialData ? initialData: ''}
                     control={control}
                     rules={{required: `${capitalize(displayName)} is required.`}}
                     render={({field}: any) => (<FormControl fullWidth>
@@ -247,7 +252,12 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, value, update, index
     });
     const itemValue = useWatch({control: subControl});
     useEffect(() => {
-        update(index, itemValue);
+        console.log({itemValue})
+        if (itemValue) {
+            setTimeout(()=>{
+                update(index, itemValue)
+            }, 1000)
+        }
     }, [itemValue]);
     const resolvedSchema = resolveSchema(schema);
     const displayName: string = name ? name.split(".").pop() as string : "";
@@ -279,9 +289,10 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, value, update, index
 export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, errors, control, name}) => {
     const innerSchema = resolveSchema(getInnerSchema(schema)) as any;
     const displayName: string = name ? name.replace("Id", "").split(".").pop() as string : "";
-    const {fields, append, remove, update} = useFieldArray({
+    const {fields, append, remove, update, replace} = useFieldArray({
         control, name: name as string
     });
+    globalReplace = replace
     if (innerSchema.description) {
         try {
             const template = JSON.parse(innerSchema.description).template;
@@ -305,7 +316,6 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, errors, con
         ...previousValue, [key]: null
     }), {}) : {};
     return (<>
-
         {fields.map((field, index) => {
             return (<ArrayItem
                 index={index}
@@ -339,12 +349,15 @@ export const ConditionalTemplate: React.FC<
 > = ({
          schema, errors, control, parent, name, props, sx
      }) => {
+    const parentName = name ? name.split(".")[0] : name as string;
     const displayName: string = name ? name.replace("Id", "").split(".").pop() as string : "";
     const condition: Condition = props.condition;
-    const value = useWatch({control});
+    const value = useWatch({control, name: parentName});
     const [conditionMet, setConditionMet] = useState<boolean>(false);
 
+
     useEffect(() => {
+        console.log(value, condition.key, name)
         if (!value) return;
 
         setConditionMet(value[condition.key] === condition.value);
@@ -485,7 +498,7 @@ export const Form: React.FC<
          schema, handler, api, debug, initialData, onChange, isSubMenu, labelObjects = false, columns = 1
      }) => {
     const {
-        formState: {errors, isValid, isSubmitting}, control, getValues, handleSubmit,
+        formState: {errors, isValid, isSubmitting}, control, getValues, handleSubmit, setValue
     } = useForm<z.infer<typeof schema>>({resolver: zodResolver(schema), defaultValues: initialData});
     const values = useWatch({control});
     const resolvedSchema = resolveSchema(schema);

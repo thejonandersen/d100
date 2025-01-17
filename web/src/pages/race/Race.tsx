@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography'
 import {useNavigate, useParams} from 'react-router'
 import {RaceModal} from './Modal'
 
-type Race = z.infer<typeof CreateRaceSchema>
+type Race = z.infer<typeof CreateRaceSchema> & {id: string}
 
 export const Race = () => {
     const [races, setRaces] = useState<Race[]>([])
