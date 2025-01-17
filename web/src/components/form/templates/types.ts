@@ -6,25 +6,22 @@ import {JSONSchema} from "d100-libs";
 
 export type FormRootProps = {
     schema: z.ZodTypeAny;
-    handler: (data: any) => any;
-    onChange?: (data: any) => any;
     api?: AxiosInstance;
     debug?: boolean;
     initialData?: any;
     isSubMenu?: boolean;
     columns?: number;
     labelObjects?: boolean;
+    id: string;
 };
 
 type BaseTemplateProps = {
-    errors: FieldErrors;
-    control: Control;
     name?: string;
-    parent?: string;
     props?: any;
-    initialData?: any;
     gridWrap?: boolean;
     sx?: any;
+    gridSize: number;
+    formId: string;
 }
 
 export type StringTemplateProps = {
@@ -65,12 +62,7 @@ export type AsyncSelectionTemplateProps = BaseTemplateProps & {
     props: DynamicSelectionProps
 }
 
-export type ArrayItemProps = ConditionalTemplateProps & {
-    index: number;
-    update: UseFieldArrayUpdate<any, any>;
-    value: any;
-    remove: UseFieldArrayRemove;
-}
+export type ArrayItemProps = ConditionalTemplateProps
 
 export type JSONStringTemplateProps = BaseTemplateProps & {
     schema: typeof JSONSchema;

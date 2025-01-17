@@ -62,10 +62,9 @@ export const CreateOrEditAdvantage = () => {
                 <CardHeader title={`${initialData ? "Edit": "Create New"} Advantage`}></CardHeader>
                 {shouldRender ? (<Form
                     schema={CreateAdvantageSchema}
-                    handler={handler}
                     api={API}
                     initialData={initialData}
-                    debug
+                    id="advantages"
                 />) : <>
                     <Skeleton />
                     <Skeleton />

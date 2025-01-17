@@ -116,7 +116,6 @@ export const CreateOrEditRace = () => {
                             {shouldRender ? (<>
                                 <Form
                                     schema={topFormSchemas}
-                                    handler={handler}
                                     api={API}
                                     initialData={{
                                         name: initialData?.name,
@@ -127,7 +126,7 @@ export const CreateOrEditRace = () => {
                                     }}
                                     isSubMenu
                                     columns={3}
-                                    onChange={handleChange}
+                                    id="raceTop"
                                 />
                                 <Typography variant="h6" sx={{pt: 1}}>Starting Stats</Typography>
                                 <Box sx={{
@@ -139,22 +138,20 @@ export const CreateOrEditRace = () => {
 
                                     <Form
                                         schema={stats}
-                                        handler={handler}
                                         initialData={initialData?.stats}
                                         isSubMenu
                                         columns={4}
                                         labelObjects
-                                        onChange={(d) => handleChange(d, 'stats')}
+                                        id="stats"
                                     />
                                 </Box>
                                 <Box sx={{pt: 1}}>
                                     <Form
                                         schema={bottomFormSchemas}
-                                        handler={handler}
                                         api={API}
                                         initialData={initialData?.special}
                                         isSubMenu
-                                        onChange={handleChange}
+                                        id="raceBottom"
                                     />
                                 </Box>
                             </>) : <>
