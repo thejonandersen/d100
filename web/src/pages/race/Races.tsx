@@ -7,7 +7,7 @@ import {
     ListItemText,
     Container, Button
 } from '@mui/material'
-import {CreateRaceSchema} from 'd100-libs'
+import {AdvantageCategory, CreateRaceSchema} from 'd100-libs'
 import z from 'zod'
 import {API} from '../../common/axios'
 import IconResolver from '../../components/IconResolver'
@@ -15,14 +15,15 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import {useNavigate, useParams} from 'react-router'
 import {RaceModal} from './Modal'
+import {load as loadRaces, all as allRaces, Race} from '../../state/race/slice'
+import {useAppDispatch, useAppSelector} from '../../state/hooks'
 
-type Race = z.infer<typeof CreateRaceSchema> & {id: string}
-
-export const Race = () => {
-    const [races, setRaces] = useState<Race[]>([])
+export const Races = () => {
+    const races = useAppSelector(allRaces)
     const [selected, setSelected] = useState<Race|null>();
     const [special, setSpecial] = useState<any>()
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const handleRaceClick = (race: Race) => {
         setSelected(race);
@@ -43,17 +44,12 @@ export const Race = () => {
         setSpecial(null);
     }
 
-    const loadRaces = async () => {
-        try {
-            const response = await API.get<Race[]>('race', {params: {include: 'languages'}});
-            setRaces(response);
-        } catch (e) {
-            console.log(e)
-        }
-    }
     useEffect(() => {
-        loadRaces();
-    }, [])
+        if (!races.length) {
+            dispatch(loadRaces());
+        }
+    }, [races])
+
     return (
         <Container>
             <Box

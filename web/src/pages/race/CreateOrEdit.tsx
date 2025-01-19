@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {
     Alert,
+    Box,
+    Button,
     Card,
+    CardActions,
+    CardContent,
     CardHeader,
     Container,
-    Skeleton,
-    Zoom,
-    Box,
-    Typography,
-    CardContent,
-    Grid2,
-    Paper,
-    IconButton,
     Divider,
+    Grid2,
     InputBase,
-    InputLabel, Tooltip, Button, CardActions
+    Skeleton,
+    Tooltip,
+    Typography,
+    Zoom
 } from "@mui/material";
 import {SubmitHandler} from "react-hook-form";
 import {API} from "../../common/axios";
@@ -24,18 +24,17 @@ import {Form} from "../../components/form";
 import {useParams} from "react-router";
 import {resolveSchema} from "../../components/form/utils";
 import IconResolver from '../../components/IconResolver';
-import {useCalculateCost} from './useCalculateCost'
-
-type Race = {id?: string} & z.infer<typeof CreateRaceSchema>
+import * as slice from '../../state/race/slice';
+import {useAppDispatch, useAppSelector} from '../../state/hooks'
+import {useCreateOrEdit} from "./useCreateOrEdit";
 
 export const CreateOrEditRace = () => {
-    const [shouldRender, setShouldRender] = useState<boolean>(false);
-    const [initialData, setInitialData] = useState<Race>();
+    const {id} = useParams();
+    const {initialData, shouldRender, cost, itemizedCost, submit, canSubmit} = useCreateOrEdit(id, resolveSchema(CreateRaceSchema), slice, 'race');
     const [message, setMessage] = useState<string | null>(null);
     const [severity, setSeverity] = useState<any>();
-    const [data, setData] = useState<Race>();
-    const {cost, itemizedCost} = useCalculateCost(data);
-    const {id} = useParams();
+    const dispatch = useAppDispatch();
+
     const resolvedSchema: any = resolveSchema(CreateRaceSchema);
     const stats = resolvedSchema.shape.stats;
 
@@ -44,11 +43,11 @@ export const CreateOrEditRace = () => {
         type: resolvedSchema.shape.type,
         move: resolvedSchema.shape.move,
         languageIds: resolvedSchema.shape.languageIds,
-        advantageIds: resolvedSchema.shape.advantageIds,
+        advantageIds: resolvedSchema.shape.advantageIds
     });
 
     const bottomFormSchemas = z.object({
-        special: resolvedSchema.shape.special,
+        special: resolvedSchema.shape.special
     });
 
     const clearMessages = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -63,49 +62,6 @@ export const CreateOrEditRace = () => {
         setTimeout(clearMessages, 2000);
     };
 
-    const handleChange = (payload: any, key: string | null = null) => {
-        const change = key ? { [key]: payload } : payload;
-
-        setData({
-            ...initialData,
-            ...data,
-            ...change,
-        })
-    };
-
-    const handler: SubmitHandler<Race> = async (data: Race) => {
-        try {
-            const response = await API.post(`race${id ? `/${id}` : ""}`, data);
-            openMessages(`Race ${id ? "updated" : "created"}: ${data.name}`, "success");
-        } catch (e: any) {
-            openMessages(e.message, "error");
-        }
-    };
-
-    const loadRace = async () => {
-        try {
-            const response = await API.get(`race/${id}`);
-            setInitialData(response);
-        } catch (e) {
-
-        }
-    };
-
-    useEffect(() => {
-        if (initialData && !shouldRender) {
-            setShouldRender(true);
-        }
-    }, [initialData]);
-
-    useEffect(() => {
-        if (!id) {
-            setShouldRender(true);
-            return;
-        }
-
-        loadRace();
-    }, [id]);
-
     return (
         <Container maxWidth="md">
             <Grid2 container spacing={3}>
@@ -116,7 +72,6 @@ export const CreateOrEditRace = () => {
                             {shouldRender ? (<>
                                 <Form
                                     schema={topFormSchemas}
-                                    api={API}
                                     initialData={{
                                         name: initialData?.name,
                                         type: initialData?.type,
@@ -124,9 +79,8 @@ export const CreateOrEditRace = () => {
                                         languageIds: initialData?.languageIds,
                                         advantageIds: initialData?.advantageIds
                                     }}
-                                    isSubMenu
                                     columns={3}
-                                    id="raceTop"
+                                    id="top"
                                 />
                                 <Typography variant="h6" sx={{pt: 1}}>Starting Stats</Typography>
                                 <Box sx={{
@@ -139,19 +93,16 @@ export const CreateOrEditRace = () => {
                                     <Form
                                         schema={stats}
                                         initialData={initialData?.stats}
-                                        isSubMenu
                                         columns={4}
                                         labelObjects
-                                        id="stats"
+                                        id="middle/stats"
                                     />
                                 </Box>
                                 <Box sx={{pt: 1}}>
                                     <Form
                                         schema={bottomFormSchemas}
-                                        api={API}
                                         initialData={initialData?.special}
-                                        isSubMenu
-                                        id="raceBottom"
+                                        id="bottom/special"
                                     />
                                 </Box>
                             </>) : <>
@@ -163,22 +114,24 @@ export const CreateOrEditRace = () => {
                             </>}
                         </CardContent>
                         <CardActions sx={{pb: 1}}>
-                            <Button variant="contained">Submit</Button>
+                            <Button variant="contained" disabled={!canSubmit} onClick={submit}>Submit</Button>
                         </CardActions>
                     </Card>
                 </Grid2>
                 <Grid2 size={2}>
                     <Card>
-                        <CardHeader title="Cost" />
+                        <CardHeader title="Cost"/>
                         <Box width="100%" sx={{flexDirection: "row", display: "flex", alignItems: 'center'}}>
                             <InputBase
-                                sx={{ ml: 1, flex: 1, fontSize: 30 }}
+                                sx={{ml: 1, flex: 1, fontSize: 30}}
                                 placeholder="0"
                                 value={cost}
                             />
-                            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                            <Tooltip title="Each starting language after 1, +3. Every point of MOVE above 6, +10. Every point of MOVE below 6, -10. For every stat point above 20, +3. Every stat point below 20, -3. Each advantage has a cost." arrow>
-                                <IconResolver iconName="Help" sx={{flex: 0.5}} />
+                            <Divider sx={{height: 28, m: 0.5}} orientation="vertical"/>
+                            <Tooltip
+                                title="Each starting language after 1, +3. Every point of MOVE above 6, +10. Every point of MOVE below 6, -10. For every stat point above 20, +3. Every stat point below 20, -3. Each advantage has a cost."
+                                arrow>
+                                <IconResolver iconName="Help" sx={{flex: 0.5}}/>
                             </Tooltip>
                         </Box>
                     </Card>

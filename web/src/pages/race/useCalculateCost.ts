@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
-import z, {number} from 'zod'
-import {CreateRaceSchema, StatSchema, Stat as StatName} from "d100-libs";
+import z from 'zod'
+import {StatSchema, Stat as StatName} from "d100-libs";
+import {Race} from '../../state/race/slice'
 import {getTypedProperty} from '../../common/utils'
-type Stat = z.infer<typeof StatSchema>
 
-type Race = z.infer<typeof CreateRaceSchema>
+type Stat = z.infer<typeof StatSchema>
 
 export type CostItem = {
     total: number,
@@ -20,7 +20,7 @@ export type Itemization = {
     advantages: CostItem,
 }
 
-export const useCalculateCost = (data: Race | undefined): {cost: number, itemizedCost: Itemization} => {
+export const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: Itemization} => {
     const [itemizedCost, setItemizedCost] = useState<Itemization>({
         stats: {
             total: 0,
@@ -33,7 +33,10 @@ export const useCalculateCost = (data: Race | undefined): {cost: number, itemize
     });
     const [cost, setCost] = useState(0);
 
-    const calculateAndItemizeCosts = (data: Race): void => {
+    const calculateAndItemizeCosts = (data: any): void => {
+        if (!data) {
+            return;
+        }
         let runningTotal = 0;
         let itemized = {...itemizedCost};
         const {advantageIds, languageIds, move, stats} = data;
@@ -72,11 +75,11 @@ export const useCalculateCost = (data: Race | undefined): {cost: number, itemize
     }
 
     useEffect(() => {
-        if (!data)
+        if (!mergedData)
             return;
 
-        calculateAndItemizeCosts(data);
-    }, [data])
+        calculateAndItemizeCosts(mergedData);
+    }, [mergedData])
 
     return {itemizedCost, cost};
 }

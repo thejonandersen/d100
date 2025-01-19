@@ -13,7 +13,8 @@ type UpdatePayload = CreatePayload & { id: string }
 
 export const loadAdvantages = createAsyncThunk(
     'advantages/load',
-    async () => {
+    async (_, {getState}) => {
+        const current = getState() as AdvantagesState;
         try {
             const response = await API.get('advantage');
             return response;
@@ -58,7 +59,7 @@ const initialState: AdvantagesState = {
 }
 
 const advantagesSlice = createSlice({
-    name: 'advantages',
+    name: 'advantage',
     initialState,
     reducers: {},
     extraReducers: builder => {
@@ -109,7 +110,7 @@ const advantagesSlice = createSlice({
     selectors: {
         allAdvantages: sliceState => sliceState.advantages,
         advantageById: (sliceState, id): Advantage | undefined => {
-            return sliceState.advantages.find(a => a.id === id)
+            return sliceState.advantages?.find(a => a.id === id)
         }
     }
 })

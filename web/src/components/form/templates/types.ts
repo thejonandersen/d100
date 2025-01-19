@@ -1,18 +1,19 @@
 import {z, ZodTypeAny} from "zod";
-import {Control, FieldErrors, UseFieldArrayRemove, UseFieldArrayUpdate} from "react-hook-form";
 import React from "react";
 import {AxiosInstance} from "axios";
 import {JSONSchema} from "d100-libs";
 
 export type FormRootProps = {
     schema: z.ZodTypeAny;
-    api?: AxiosInstance;
-    debug?: boolean;
     initialData?: any;
-    isSubMenu?: boolean;
     columns?: number;
     labelObjects?: boolean;
     id: string;
+    submitData?: {
+        keys: string[];
+        url: string;
+        id?: string;
+    }
 };
 
 type BaseTemplateProps = {
@@ -22,6 +23,7 @@ type BaseTemplateProps = {
     sx?: any;
     gridSize: number;
     formId: string;
+    shouldLabelObjects?: boolean;
 }
 
 export type StringTemplateProps = {

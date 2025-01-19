@@ -19,10 +19,10 @@ import {advantageCategoryIcons, specialReqsToString, reqToString} from './utils'
 import IconResolver from '../../components/IconResolver'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import {useNavigate, useParams} from 'react-router'
-import {loadAdvantages, allAdvantages} from '../../state/advantages/slice'
+import {useNavigate} from 'react-router'
+import {loadAdvantages, allAdvantages} from '../../state/advantage/slice'
 import {useAppSelector, useAppDispatch} from '../../state/hooks'
-import type {Advantage} from '../../state/advantages/slice'
+import type {Advantage} from '../../state/advantage/slice'
 
 
 export const Advantages = () => {

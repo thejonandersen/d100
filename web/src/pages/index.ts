@@ -3,7 +3,7 @@ export {CreateOrEditAdvantage} from './advantage/CreateOrEdit';
 export {Character} from './Character'
 export {Home} from './Home'
 export {Language} from './Language'
-export {Race} from './race/Race'
+export {Races} from './race/Races'
 export {CreateOrEditRace} from './race/CreateOrEdit';
 export {User} from './User'
 export {Login} from './Login'
