@@ -5,42 +5,12 @@ import {CreateAdvantageSchema, UpdateAdvantageSchema} from 'd100-libs'
 
 export type Advantage = { id?: string } & z.infer<typeof CreateAdvantageSchema>
 
-type CreatePayload = {
-    data: Advantage,
-}
-
-type UpdatePayload = CreatePayload & { id: string }
-
-export const loadAdvantages = createAsyncThunk(
+export const load = createAsyncThunk(
     'advantages/load',
     async (_, {getState}) => {
         const current = getState() as AdvantagesState;
         try {
-            const response = await API.get('advantage');
-            return response;
-        } catch (e) {
-            console.error(e)
-            return Promise.reject()
-        }
-    })
-
-export const updateAdvantage = createAsyncThunk(
-    'advantages/updateOne',
-    async ({id, data}: UpdatePayload) => {
-        try {
-            const response = await API.post(`advantage/${id}`, data);
-            return response;
-        } catch (e) {
-            console.error(e)
-            return Promise.reject()
-        }
-    })
-
-export const createAdvantage = createAsyncThunk(
-    'advantages/create',
-    async ({data}: CreatePayload) => {
-        try {
-            const response = await API.post(`advantage`, data);
+            const response = await API.get('advantage?allRecords=true');
             return response;
         } catch (e) {
             console.error(e)
@@ -50,12 +20,12 @@ export const createAdvantage = createAsyncThunk(
 
 export interface AdvantagesState {
     advantages: Advantage[],
-    status: "loading" | "idle" | "failed" | "submitting";
+    status: 'idle' | 'loading' | 'failed'
 }
 
 const initialState: AdvantagesState = {
     advantages: [],
-    status: 'idle'
+    status: 'idle',
 }
 
 const advantagesSlice = createSlice({
@@ -64,57 +34,30 @@ const advantagesSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
-            .addCase(loadAdvantages.pending, (state) => {
+            .addCase(load.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(loadAdvantages.fulfilled, (state, action) => {
+            .addCase(load.fulfilled, (state, action) => {
                 return {
                     status: 'idle',
                     advantages: action.payload
                 }
             })
-            .addCase(loadAdvantages.rejected, (state) => {
-                state.status = 'failed';
-            })
-            .addCase(updateAdvantage.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(updateAdvantage.fulfilled, (state, action) => {
-                const {id} = action.payload;
-                const index = state.advantages.map(item => item.id).indexOf(id);
-                state.advantages[index] = action.payload;
-            })
-            .addCase(updateAdvantage.rejected, (state) => {
-                state.status = 'failed';
-            })
-            .addCase(createAdvantage.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(createAdvantage.fulfilled, (state, action) => {
-                const loadThenAdd = async () => {
-                    await loadAdvantages();
-                    state.advantages.push(action.payload)
-                }
-
-                if (!state.advantages.length) {
-                    loadThenAdd();
-                } else {
-                    state.advantages.push(action.payload)
-                }
-
-            })
-            .addCase(createAdvantage.rejected, (state) => {
+            .addCase(load.rejected, (state) => {
                 state.status = 'failed';
             })
     },
     selectors: {
-        allAdvantages: sliceState => sliceState.advantages,
-        advantageById: (sliceState, id): Advantage | undefined => {
+        all: sliceState => sliceState.advantages,
+        byId: (sliceState, id): Advantage | undefined => {
             return sliceState.advantages?.find(a => a.id === id)
+        },
+        byIds: (sliceState, ids) => {
+            return ids ? ids.map((id: string) => sliceState.advantages.find(a => a.id === id)):[]
         }
     }
 })
 
-export const {allAdvantages, advantageById} = advantagesSlice.selectors;
+export const {all, byId, byIds} = advantagesSlice.selectors;
 
 export default advantagesSlice.reducer;

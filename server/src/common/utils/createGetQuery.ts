@@ -5,8 +5,8 @@ import {GetQuery} from "@/common/models";
 const parseFieldsOrInclude = (fields: string)=> fields.split(',').reduce((acc: any, curr: string) => acc[curr] = true, {});
 
 const createGetQuery = (req: Request): GetPrismaQuery => {
-    const {limit, page, fields, include}: GetQuery = req.query;
-    const query: GetPrismaQuery = {
+    const {limit, page, fields, include, allRecords}: GetQuery = req.query;
+    const query: GetPrismaQuery = allRecords ? {} : {
         take: limit || 10,
         skip: !!limit && !!page ? (page - 1) * limit : 0,
     };

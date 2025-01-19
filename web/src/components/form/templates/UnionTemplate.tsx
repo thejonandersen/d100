@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useRef, useState} from "react";
 import {capitalize, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {UnionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
@@ -6,10 +6,10 @@ import {GridWrap, StyleWrap} from './Wrappers'
 
 
 export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, gridSize, formId, gridWrap = true}) => {
-    const [currentValue, setCurrentValue] = useState<string>();
     const values = schema.options.map((option: any) => option.value).sort();
     let multiple: boolean = false;
     const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
+    const selectRef = useRef(null);
     try {
         if (schema.description) {
             multiple = JSON.parse(schema.description).multiple;
@@ -28,7 +28,7 @@ export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, g
                     label={displayName}
                     multiple={multiple}
                     onChange={handleChange}
-                    value={defaultValue || ''}
+                    value={defaultValue ? defaultValue : multiple ? [] : ''}
                     variant="outlined"
                 >
                     {values && values.map((value: any) => (value &&

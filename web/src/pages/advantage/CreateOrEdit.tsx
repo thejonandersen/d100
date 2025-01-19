@@ -3,7 +3,7 @@ import {Alert, Card, CardHeader, Container, Skeleton, Zoom} from '@mui/material'
 import {CreateAdvantageSchema} from 'd100-libs'
 import {Form} from '../../components/form'
 import {useParams} from 'react-router'
-import {advantageById, loadAdvantages} from '../../state/advantage/slice';
+import {byId as advantageById, load as loadAdvantages} from '../../state/advantage/slice';
 import {useAppDispatch, useAppSelector} from '../../state/hooks'
 
 export const CreateOrEditAdvantage = () => {

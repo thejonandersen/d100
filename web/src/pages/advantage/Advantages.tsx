@@ -20,38 +20,16 @@ import IconResolver from '../../components/IconResolver'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import {useNavigate} from 'react-router'
-import {loadAdvantages, allAdvantages} from '../../state/advantage/slice'
+import {load as loadAdvantages, all as allAdvantages} from '../../state/advantage/slice'
 import {useAppSelector, useAppDispatch} from '../../state/hooks'
 import type {Advantage} from '../../state/advantage/slice'
+import useCollectionPage from '../../hooks/useCollectionPage'
 
 
 export const Advantages = () => {
-    const advantages = useAppSelector(allAdvantages);
+    const {data: advantages, handleEditClick, handleCreateClick, setSelected, selected, special} = useCollectionPage('advantage');
     const [categories, setCategories] = useState<AdvantageCategory[]>([])
     const [openCategory, setOpenCategory] = useState<AdvantageCategory|null>()
-    const [selected, setSelected] = useState<Advantage|null>();
-    const [special, setSpecial] = useState<any>()
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-
-    const handleAdvantageClick = (advantage: Advantage) => {
-        setSelected(advantage);
-        if (advantage.special) {
-            setSpecial(JSON.parse(advantage.special));
-        }
-    }
-
-    const handleAdvantageEditClick = (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        navigate(`edit/${id}`)
-    }
-
-    const handleClose = () => {
-        setSelected(null);
-        setSpecial(null);
-    }
 
     const toggleOpen = (cat: AdvantageCategory) => {
         if (openCategory === cat) {
@@ -63,7 +41,7 @@ export const Advantages = () => {
 
     useEffect(() => {
         if (!advantages.length) {
-            dispatch(loadAdvantages());
+            return;
         } else {
             const categories: AdvantageCategory[] = [];
             advantages.forEach(advantage => {
@@ -87,7 +65,7 @@ export const Advantages = () => {
                 <Button
                     variant="contained"
                     startIcon={<IconResolver iconName="Add" />}
-                    onClick={() => navigate('create')}
+                    onClick={() => handleCreateClick()}
                 >
                     Create New
                 </Button>
@@ -140,12 +118,12 @@ export const Advantages = () => {
                                     <ListItemButton
                                         key={item.name}
                                         sx={{ py: 1, minHeight: 32}}
-                                        onClick={() => handleAdvantageClick(item)}
+                                        onClick={() => setSelected(item)}
                                     >
                                         <ListItemText
                                             primary={item.name}
                                         />
-                                        <Button onClick={(e) => handleAdvantageEditClick(e, item.id as string)}>Edit</Button>
+                                        <Button onClick={(e) => handleEditClick(e, item.id as string)}>Edit</Button>
                                     </ListItemButton>
                                 ))}
                         </Box>
@@ -163,7 +141,7 @@ export const Advantages = () => {
             >
                 <Card sx={{maxWidth: 500}}>
                     <CardHeader
-                        avatar={selected && <Avatar><IconResolver iconName={advantageCategoryIcons[selected.category]} /></Avatar>}
+                        avatar={selected && <Avatar><IconResolver iconName={advantageCategoryIcons[selected.category as AdvantageCategory]} /></Avatar>}
                         title={selected?.name}
                         subheader={selected?.category.replace('_', ' ')}
                         titleTypographyProps={{
@@ -183,7 +161,7 @@ export const Advantages = () => {
                         </Typography>
 
                         <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{`Requirements${special && special.requirements ? ` (${specialReqsToString(special.requirements)})`:''}:`}</Typography>
-                        {selected?.requirements.map((req) => {
+                        {selected?.requirements.map((req: any) => {
                             return (
                                 <Typography>{reqToString(req)}</Typography>
                             )

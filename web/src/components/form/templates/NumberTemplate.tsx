@@ -21,7 +21,7 @@ export const NumberTemplate: React.FC<NumberTemplateProps> = ({
                     }
                 } : {}}
                 fullWidth
-                onChange={handleChange}
+                onChange={e => handleChange(e, null, true)}
             />
         </StyleWrap>
     </GridWrap>);

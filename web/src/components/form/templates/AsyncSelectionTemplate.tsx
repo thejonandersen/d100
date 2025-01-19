@@ -1,18 +1,25 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {capitalize, CircularProgress, FormControl, Grid2, InputLabel, MenuItem, Select} from "@mui/material";
 import {AsyncSelectionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
 import {StyleWrap} from './Wrappers'
-import {API} from '../../../common/axios'
+import {useAppDispatch, useAppSelector} from '../../../state/hooks'
+import {allSlices} from '../../../state/slices';
 
 export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
     name, props, schema, gridSize, sx, formId
 }) => {
     const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
     const [open, setOpen] = useState<boolean>(false);
-    const [options, setOptions] = useState<any[]>([]);
+    //@ts-ignore
+    const {all, load} = allSlices[props.collection]
+    const options: any[] = useAppSelector(all);
     const [loading, setLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
+    // @ts-ignore
+    const stateData: any = useAppSelector((state) => state[props.endpoint]);
     let multiple: boolean = false;
+
     try {
         if (schema.description) {
             multiple = JSON.parse(schema.description).multiple;
@@ -21,32 +28,21 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
         console.error(e.message);
     }
 
-    if (!API) {
-        throw new Error("to use AsyncSelectionTemplates, you must pass an AxiosInstance as api when creating your Form instance");
-    }
-
-    const loadOptions = async () => {
-        try {
-            const results = await API.get(props.endpoint);
-            setOptions(results);
-            setLoading(false);
-        } catch (e: any) {
-            console.error(e.message);
-        }
-    };
-
     const handleOpen = () => {
         setOpen(true);
-        if (!options.length) {
-            setLoading(true);
-            loadOptions();
-        }
     };
 
     const handleClose = () => {
         setOpen(false);
         setLoading(false);
     };
+
+    useEffect(() => {
+        console.log({options})
+        if (defaultValue && !options.length) {
+            dispatch(load())
+        }
+    }, [defaultValue, options])
 
     return (<Grid2 size={{sm: 12, xs: 12, md: gridSize, lg: gridSize, xl: gridSize}}>
         <StyleWrap sx={sx}>
@@ -61,7 +57,7 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
                     open={open}
                     multiple={multiple}
                     onChange={handleChange}
-                    value={defaultValue}
+                    value={defaultValue ? defaultValue : multiple ? [] : ''}
                     variant="outlined"
                 >
                     {loading ? <CircularProgress color="inherit" size={20}/> : null}

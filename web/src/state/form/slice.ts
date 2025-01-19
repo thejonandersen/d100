@@ -58,8 +58,10 @@ const formSlice = createSlice({
         clearAll: state => ({...state, forms: {}, status: 'idle'}),
         updateFormData: (state, action) => {
             const {data, path}: { id: string, data: any, path: string } = action.payload;
-            _.set(state.forms, path, data);
-            state.status = 'dirty';
+            if (!_.isEqual(_.get(state.forms, path), data)) {
+                _.set(state.forms, path, data);
+                state.status = 'dirty';
+            }
         }
     },
     selectors: {

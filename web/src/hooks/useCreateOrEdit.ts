@@ -1,11 +1,11 @@
 import {useCallback, useEffect, useState} from "react";
-import {useAppDispatch, useAppSelector} from '../../state/hooks'
-import {useCalculateCost} from './useCalculateCost'
-import {mergedFormsData, status, submitForm} from '../../state/form/slice'
+import {useAppDispatch, useAppSelector} from '../state/hooks'
+import useCalculateCost from './useCalculateCost'
+import {mergedFormsData, status, submitForm} from '../state/form/slice'
 import z from 'zod'
 import _ from 'lodash'
 
-export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, slice: any,  url: string) => {
+export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, slice: any,  url: string, submitCost: boolean = false) => {
     const [shouldRender, setShouldRender] = useState(false);
     const [isValid, setIsValid] = useState<boolean>(false);
     const [canSubmit, setCanSubmit] = useState<boolean>(false);
@@ -18,6 +18,9 @@ export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, sl
     const {cost, itemizedCost} = useCalculateCost(data);
 
     const submit = () => {
+        if (submitCost) {
+            data.cost = cost;
+        }
         dispatch(submitForm({url, id, data}))
     }
 
@@ -44,6 +47,8 @@ export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, sl
         if (_.isEqual(data, merged)) {
             return;
         }
+
+        console.log(schema.safeParse(merged), merged)
 
         setIsValid(schema.safeParse(merged).success);
         setData(merged);

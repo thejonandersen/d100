@@ -57,12 +57,12 @@ export const AppRoutes = () => {
                         <Races />
                     </ProtectedRoute>
                 }/>
-                <Route path="/race/edit/:id" element={
+                <Route path="/race/create" element={
                     <ProtectedRoute user={user.current as User}>
-                        <CreateOrEditRace />
+                        <CreateOrEditRace/>
                     </ProtectedRoute>
                 }/>
-                <Route path="/race/create/:id" element={
+                <Route path="/race/edit/:id" element={
                     <ProtectedRoute user={user.current as User}>
                         <CreateOrEditRace />
                     </ProtectedRoute>

@@ -6,6 +6,7 @@ const GetSchema = z.object({
     fields: z.string().optional(),
     include: z.string().optional(),
     orderBy: z.array(z.string()).optional(),
+    allRecords: z.boolean().optional(),
 });
 
 export type GetQuery = z.infer<typeof GetSchema>

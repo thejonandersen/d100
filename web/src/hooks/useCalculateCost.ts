@@ -1,8 +1,10 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useReducer} from 'react';
 import z from 'zod'
 import {StatSchema, Stat as StatName} from "d100-libs";
-import {Race} from '../../state/race/slice'
-import {getTypedProperty} from '../../common/utils'
+import {byIds} from '../state/advantage/slice'
+import {getTypedProperty} from '../common/utils'
+import {useAppSelector} from '../state/hooks'
+import _ from 'lodash'
 
 type Stat = z.infer<typeof StatSchema>
 
@@ -20,7 +22,7 @@ export type Itemization = {
     advantages: CostItem,
 }
 
-export const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: Itemization} => {
+const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: Itemization} => {
     const [itemizedCost, setItemizedCost] = useState<Itemization>({
         stats: {
             total: 0,
@@ -32,14 +34,17 @@ export const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: 
         }
     });
     const [cost, setCost] = useState(0);
+    const [data, setData] = useState<any>();
+    const [advantageIds, setAdvantageIds] = useState<string[]>([]);
+    const advantages = useAppSelector(state => byIds(state, advantageIds))
 
-    const calculateAndItemizeCosts = (data: any): void => {
+    useEffect(() => {
         if (!data) {
             return;
         }
         let runningTotal = 0;
         let itemized = {...itemizedCost};
-        const {advantageIds, languageIds, move, stats} = data;
+        const {advantageIds: newIds, languageIds, move, stats} = data;
 
         if (languageIds && languageIds.length ) {
             const diff = (languageIds.length - 1) * 3;
@@ -69,17 +74,38 @@ export const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: 
             }, { total: 0, breakdown: {} }) : { total: 0 }
         }
 
+        if(advantages) {
+            let diff = 0;
+            itemized.advantages = advantages.reduce((pre: any, cur: any) => {
+                if (cur) {
+                    diff = cur.cost;
+                    runningTotal += diff;
+                    console.log(pre)
+                    pre.total += diff;
+                    pre.breakdown[cur.name] = diff;
+                }
+                return pre
+            }, { total: 0, breakdown: {} })
+        }
 
-        setItemizedCost(itemized);
-        setCost(runningTotal);
-    }
+        if (!_.isEqual(itemized, itemizedCost)) {
+            setItemizedCost(itemized);
+        }
+
+        if (cost !== runningTotal) {
+            setCost(runningTotal);
+        }
+    }, [data, advantages]);
 
     useEffect(() => {
-        if (!mergedData)
+        if (!mergedData || _.isEqual(mergedData, data))
             return;
 
-        calculateAndItemizeCosts(mergedData);
+        setData(mergedData);
+        setAdvantageIds(mergedData.advantageIds)
     }, [mergedData])
 
     return {itemizedCost, cost};
 }
+
+export default useCalculateCost;

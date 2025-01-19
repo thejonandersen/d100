@@ -26,11 +26,11 @@ import {resolveSchema} from "../../components/form/utils";
 import IconResolver from '../../components/IconResolver';
 import * as slice from '../../state/race/slice';
 import {useAppDispatch, useAppSelector} from '../../state/hooks'
-import {useCreateOrEdit} from "./useCreateOrEdit";
+import {useCreateOrEdit} from "../../hooks/useCreateOrEdit";
 
 export const CreateOrEditRace = () => {
     const {id} = useParams();
-    const {initialData, shouldRender, cost, itemizedCost, submit, canSubmit} = useCreateOrEdit(id, resolveSchema(CreateRaceSchema), slice, 'race');
+    const {initialData, shouldRender, cost, itemizedCost, submit, canSubmit} = useCreateOrEdit(id, resolveSchema(CreateRaceSchema), slice, 'race', true);
     const [message, setMessage] = useState<string | null>(null);
     const [severity, setSeverity] = useState<any>();
     const dispatch = useAppDispatch();
@@ -102,7 +102,7 @@ export const CreateOrEditRace = () => {
                                     <Form
                                         schema={bottomFormSchemas}
                                         initialData={initialData?.special}
-                                        id="bottom/special"
+                                        id="bottom"
                                     />
                                 </Box>
                             </>) : <>

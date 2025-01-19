@@ -1,16 +1,16 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import z from "zod";
 import {API} from "../../common/axios";
-import {CreateRaceSchema} from 'd100-libs'
+import {CreateLanguageSchema} from 'd100-libs'
 
-export type Race = { id?: string } & z.infer<typeof CreateRaceSchema>
+export type Language = { id?: string } & z.infer<typeof CreateLanguageSchema>
 
 export const load = createAsyncThunk(
-    'races/load',
+    'languages/load',
     async (_, {getState}) => {
-        const current = getState() as RacesState;
+        const current = getState() as LanguagesState;
         try {
-            const response = await API.get('race?allRecords=true');
+            const response = await API.get('language/?allRecords=true');
             return response;
         } catch (e) {
             console.error(e)
@@ -18,18 +18,18 @@ export const load = createAsyncThunk(
         }
     })
 
-export interface RacesState {
-    races: Race[],
-    status: "loading" | "idle" | "failed" | "submitting";
+export interface LanguagesState {
+    languages: Language[],
+    status: 'idle' | 'loading' | 'failed'
 }
 
-const initialState: RacesState = {
-    races: [],
-    status: 'idle'
+const initialState: LanguagesState = {
+    languages: [],
+    status: 'idle',
 }
 
-const racesSlice = createSlice({
-    name: 'race',
+const languagesSlice = createSlice({
+    name: 'language',
     initialState,
     reducers: {},
     extraReducers: builder => {
@@ -40,7 +40,7 @@ const racesSlice = createSlice({
             .addCase(load.fulfilled, (state, action) => {
                 return {
                     status: 'idle',
-                    races: action.payload
+                    languages: action.payload
                 }
             })
             .addCase(load.rejected, (state) => {
@@ -48,13 +48,13 @@ const racesSlice = createSlice({
             })
     },
     selectors: {
-        all: sliceState => sliceState.races,
-        byId: (sliceState, id): Race | undefined => {
-            return sliceState.races?.find(a => a.id === id)
+        all: sliceState => sliceState.languages,
+        byId: (sliceState, id): Language | undefined => {
+            return sliceState.languages?.find(a => a.id === id)
         }
     }
 })
 
-export const {all, byId} = racesSlice.selectors;
+export const {all, byId} = languagesSlice.selectors;
 
-export default racesSlice.reducer;
+export default languagesSlice.reducer;

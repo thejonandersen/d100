@@ -17,38 +17,16 @@ import {useNavigate, useParams} from 'react-router'
 import {RaceModal} from './Modal'
 import {load as loadRaces, all as allRaces, Race} from '../../state/race/slice'
 import {useAppDispatch, useAppSelector} from '../../state/hooks'
+import useCollectionPage from '../../hooks/useCollectionPage'
 
 export const Races = () => {
-    const races = useAppSelector(allRaces)
-    const [selected, setSelected] = useState<Race|null>();
-    const [special, setSpecial] = useState<any>()
+    const {data: races, selected, setSelected, handleCreateClick, handleEditClick, special} = useCollectionPage('race');
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const handleRaceClick = (race: Race) => {
-        setSelected(race);
-        if (race.special) {
-            setSpecial(JSON.parse(race.special));
-        }
-    }
-
-    const handleRaceEditClick = (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        navigate(`edit/${id}`)
-    }
-
     const handleClose = () => {
         setSelected(null);
-        setSpecial(null);
     }
-
-    useEffect(() => {
-        if (!races.length) {
-            dispatch(loadRaces());
-        }
-    }, [races])
 
     return (
         <Container>
@@ -62,7 +40,7 @@ export const Races = () => {
                 <Button
                     variant="contained"
                     startIcon={<IconResolver iconName="Add" />}
-                    onClick={() => navigate('create')}
+                    onClick={handleCreateClick}
                 >
                     Create New
                 </Button>
@@ -73,12 +51,12 @@ export const Races = () => {
                         <ListItemButton
                             key={item.name}
                             sx={{ py: 1, minHeight: 32}}
-                            onClick={() => handleRaceClick(item)}
+                            onClick={() => setSelected(item)}
                         >
                             <ListItemText
                                 primary={item.name}
                             />
-                            <Button onClick={(e) => handleRaceEditClick(e, item.id as string)}>Edit</Button>
+                            <Button onClick={(e) => handleEditClick(e, item.id as string)}>Edit</Button>
                         </ListItemButton>
                     ))}
                 </List>

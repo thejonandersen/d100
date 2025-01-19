@@ -55,7 +55,7 @@ export type ConditionalTemplateProps = {
 } & BaseTemplateProps
 
 type DynamicSelectionProps = {
-    endpoint: string;
+    collection: string;
     selectionKey: string;
 }
 

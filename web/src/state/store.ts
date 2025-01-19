@@ -4,6 +4,7 @@ import drawerReducer from "./drawer/slice";
 import advantagesReducer from './advantage/slice';
 import formReducer from "./form/slice";
 import raceReducer from "./race/slice";
+import languageReducer from "./language/slice";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         advantage: advantagesReducer,
         form: formReducer,
         race: raceReducer,
+        language: languageReducer,
     },
 });
 
