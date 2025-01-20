@@ -9,6 +9,8 @@ export const load = createAsyncThunk(
     'advantages/load',
     async (_, {getState}) => {
         const current = getState() as AdvantagesState;
+        if (current.status === 'loading')
+            return;
         try {
             const response = await API.get('advantage?allRecords=true');
             return response;

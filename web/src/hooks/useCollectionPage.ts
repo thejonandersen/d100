@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {allSlices} from '../state/slices'
+import {allSlices, Slices} from '../state/slices'
 import {useAppSelector, useAppDispatch} from '../state/hooks'
 import {useNavigate} from 'react-router'
 
 const useCollectionPage = (id: string) => {
+    const [loading, setLoading] = useState<boolean>(false);
     const [selected, setSelected] = useState<any>()
     const [special, setSpecial] = useState<any>();
-    //@ts-ignore
-    const {all, load} = allSlices[id];
+    const {all, load} = allSlices[id as keyof Slices];
     const data: any[] = useAppSelector(all);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -24,10 +24,11 @@ const useCollectionPage = (id: string) => {
     }, [data])
 
     useEffect(() => {
-        if (!data.length) {
+        if (!data.length && !loading) {
+            setLoading(true);
             dispatch(load());
         }
-    }, [data])
+    }, [data, loading]);
 
     useEffect(() => {
         if (!selected) {

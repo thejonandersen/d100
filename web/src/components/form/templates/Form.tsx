@@ -4,8 +4,9 @@ import {Box, Button, Grid2} from "@mui/material";
 import {RenderTemplate} from "./RenderTemplate";
 import {mapToPrimaryType, resolveSchema} from "../utils";
 import {FormRootProps} from "./types";
-import {isValid, registerForm, status, submitForm} from '../../../state/form/slice'
+import {mergedFormsData, registerForm, status, submitForm} from '../../../state/form/slice'
 import {useAppDispatch, useAppSelector} from '../../../state/hooks'
+import _ from "lodash";
 
 // Helper function to check if schema is an ObjectSchema
 const isObjectSchema = (schema: z.ZodTypeAny): schema is z.ZodObject<any> => {
@@ -16,15 +17,23 @@ export const Form: React.FC<FormRootProps> = ({
     schema, initialData, labelObjects = false, columns = 1, id, submitData
 }) => {
     const [registered, setRegistered] = useState<boolean>(false)
+    const [isValid, setIsValid] = useState<boolean>(false);
     const resolvedSchema = resolveSchema(schema);
     const dispatch = useAppDispatch();
     const formStatus = useAppSelector(status);
-    const valid = useAppSelector((state) => isValid(state, schema, id));
+    const mergedData = useAppSelector(mergedFormsData);
 
     useEffect(() => {
         dispatch(registerForm({id, data: initialData || {}}))
         setRegistered(true);
     }, []);
+
+    useEffect(() => {
+        if (_.isEqual({}, mergedData))
+            return;
+
+        setIsValid(schema.safeParse(mergedData).success);
+    }, [mergedData]);
 
     return (<>
         {registered && <form>
@@ -44,7 +53,7 @@ export const Form: React.FC<FormRootProps> = ({
             {submitData && (<Box sx={{display: "flex", justifyContent: "flex-end"}}>
                 <Button
                     variant="contained"
-                    disabled={formStatus !== 'dirty' && valid}
+                    disabled={formStatus !== 'dirty' && isValid}
                     onClick={() => dispatch(submitForm(submitData))}
                 >Submit</Button>
             </Box>)}

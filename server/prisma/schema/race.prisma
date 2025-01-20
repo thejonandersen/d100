@@ -1,4 +1,4 @@
-model Races {
+model Race {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   type         String[]    @default(["Humanoid"])

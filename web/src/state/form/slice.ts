@@ -3,10 +3,12 @@ import {API} from "../../common/axios";
 import _ from 'lodash';
 import {RootState} from '../store'
 
+export interface Form {
+    [key: string]: any
+}
+
 export interface FormState {
-    forms: {
-        [key: string]: any
-    };
+    forms: Form;
     status: 'dirty' | 'submitting' | 'idle' | 'failed';
 }
 
@@ -21,6 +23,8 @@ type SubmitFormPayload = {
     id?: string;
     data?: any;
 }
+
+const emptyKeys: string[] = [];
 
 export const submitForm = createAsyncThunk(
     "form/submit",
@@ -65,26 +69,47 @@ const formSlice = createSlice({
         }
     },
     selectors: {
-        isValid: (state, schema, id) => schema.safeParse(state.forms[id]),
+        getValue: (state, path: string) => createSelector(
+            [
+                state => {
+                    const parts = path.split('.');
+                    if (parts.length > 1) {
+                        parts.pop()
+                    }
+                    return _.get(state.forms, parts.join('.'));
+                }
+            ],
+            memo => {
+                return _.get(memo, path.split('.').pop() as string) as any
+            }
+        )(state),
         status: state => state.status,
-        mergedFormsData: state => Object.keys(state.forms).reduce((pre: any, key: string) => {
-            console.log(key, typeof state.forms[key])
-            const splitKey = key.split('/');
-            if (splitKey.length > 1) {
+        mergedFormsData: createSelector(
+            [
+                state => state.forms,
+                state => {
+                    const keys = Object.keys(state.forms)
+                    return keys.length ? keys : emptyKeys;
+                },
+            ],
+            (forms: any, keys: string[]) => Object.keys(forms).reduce((pre: any, key: string) => {
+                const splitKey = key.split('/');
+                if (splitKey.length > 1) {
+                    return {
+                        ...pre,
+                        [splitKey.pop() as string]: typeof forms[key] !== 'object' ? forms[key] : {
+                            ...forms[key]
+                        },
+                    }
+                }
+
                 return {
                     ...pre,
-                    [splitKey.pop() as string]: typeof state.forms[key] !== 'object' ? state.forms[key] : {
-                        ...state.forms[key]
-                    },
+                    ...forms[key],
                 }
-            }
 
-            return {
-                ...pre,
-                ...state.forms[key],
-            }
-
-        }, {}),
+            }, {}),
+        )
     },
     extraReducers: builder => {
         builder
@@ -101,22 +126,7 @@ const formSlice = createSlice({
     }
 })
 
-export const getValue = (state: RootState, path: string) => createSelector(
-    [
-        state => {
-            const parts = path.split('.');
-            if (parts.length > 1) {
-                parts.pop()
-            }
-            return _.get(state.form.forms, parts.join('.'));
-        }
-    ],
-    memo => {
-        return _.get(memo, path.split('.').pop() as string) as any
-    }
-)(state)
-
-export const {isValid, status, mergedFormsData} = formSlice.selectors;
+export const {status, mergedFormsData, getValue} = formSlice.selectors;
 export const {registerForm, clearForm, updateFormData, clearAll} = formSlice.actions;
 
 export default formSlice.reducer;

@@ -14,6 +14,7 @@ model Character {
   languages    String[]
   advantages   Advantage[] @relation(fields: [advantageIds], references: [id])
   advantageIds String[]    @db.ObjectId
+  special      Json[]    @default([])
 }
 
 type StatBlock {

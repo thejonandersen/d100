@@ -26,7 +26,7 @@ type DrawerLink = {
 }
 
 export function DrawerNav() {
-    const open = useAppSelector(state => state.drawer.open);
+    const open = useAppSelector(state => state.drawer.status === 'open');
     const dispatch = useAppDispatch();
     const dispatchToggle = () => dispatch(toggle(null));
     const navigate = useNavigate();
@@ -50,18 +50,6 @@ export function DrawerNav() {
             label: 'Characters',
             uri: 'character',
             icon: 'Face',
-            // children: [
-            //     {
-            //         label: 'Create',
-            //         uri: 'create',
-            //         icon: 'Add',
-            //     },
-            //     {
-            //         label: 'Edit',
-            //         uri: 'edit',
-            //         icon: 'Edit',
-            //     }
-            // ],
         },
     ]
 
@@ -71,19 +59,19 @@ export function DrawerNav() {
             <Box sx={{width: 250}} role="presentation">
                 <List>
                     {links.map((link) => (
-                        <>
-                            <ListItem key={link.uri} disablePadding>
-                                <ListItemButton key={`${link.uri}_button`} onClick={() => navigate(link.uri)}>
-                                    <ListItemIcon key={`${link.uri}_icon`}>
-                                        <IconResolver iconName={link.icon} key={link.icon}/>
+                        <Box key={link.label}>
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={() => navigate(link.uri)}>
+                                    <ListItemIcon>
+                                        <IconResolver iconName={link.icon}/>
                                     </ListItemIcon>
-                                    <ListItemText key={`${link.uri}_text`} primary={
-                                        <Typography key={`${link.uri}_typography`} variant="h6" fontWeight="bold">{link.label}</Typography>
+                                    <ListItemText primary={
+                                        <Typography variant="h6" fontWeight="bold">{link.label}</Typography>
                                     }/>
                                 </ListItemButton>
                             </ListItem>
-                            <Divider key={`${link.uri}_divider`}/>
-                        </>
+                            <Divider/>
+                        </Box>
                     ))}
                 </List>
             </Box>

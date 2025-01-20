@@ -2,12 +2,12 @@ import {createSlice, Slice} from "@reduxjs/toolkit";
 import z from "zod";
 
 type DrawerState = {
-    open: boolean,
+    status: 'open' | 'closed',
 }
 
 
 const initialState: DrawerState = {
-    open: false,
+    status: 'closed',
 };
 
 const drawerSlice: Slice<DrawerState> = createSlice({
@@ -15,7 +15,7 @@ const drawerSlice: Slice<DrawerState> = createSlice({
     initialState,
     reducers: {
         toggle: state => {
-            state.open = !state.open;
+            state.status = state.status === 'open' ? 'closed' : 'open';
         }
     }
 });

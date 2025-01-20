@@ -4,15 +4,14 @@ import {AsyncSelectionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
 import {StyleWrap} from './Wrappers'
 import {useAppDispatch, useAppSelector} from '../../../state/hooks'
-import {allSlices} from '../../../state/slices';
+import {allSlices, Slices} from '../../../state/slices';
 
 export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
     name, props, schema, gridSize, sx, formId
 }) => {
     const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
     const [open, setOpen] = useState<boolean>(false);
-    //@ts-ignore
-    const {all, load} = allSlices[props.collection]
+    const {all, load} = allSlices[props.collection as keyof Slices]
     const options: any[] = useAppSelector(all);
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
