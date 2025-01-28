@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import {AdvantageCategory} from 'd100-libs'
-import {advantageCategoryIcons, specialReqsToString, reqToString} from './utils'
+import {categoryIcons, specialReqsToString, reqToString} from './utils'
 import IconResolver from '../../components/IconResolver'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -91,7 +91,7 @@ export const Advantages = () => {
 
                             >
                                 <ListItemIcon sx={{ color: 'inherit', mt: 0 }}>
-                                    <IconResolver iconName={advantageCategoryIcons[category]} />
+                                    <IconResolver iconName={categoryIcons[category]} />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={category.replace('_', ' ')}
@@ -141,7 +141,7 @@ export const Advantages = () => {
             >
                 <Card sx={{maxWidth: 500}}>
                     <CardHeader
-                        avatar={selected && <Avatar><IconResolver iconName={advantageCategoryIcons[selected.category as AdvantageCategory]} /></Avatar>}
+                        avatar={selected && <Avatar><IconResolver iconName={categoryIcons[selected.category as AdvantageCategory]} /></Avatar>}
                         title={selected?.name}
                         subheader={selected?.category.replace('_', ' ')}
                         titleTypographyProps={{

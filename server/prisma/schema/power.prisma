@@ -1,32 +1,33 @@
 model Power {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  cpCost         Int         @default(0)
-  ppCost  Int @default(0)
-  apCost Int @default(3)
-  skill PowerSkill
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  cpCost             Int           @default(0)
+  ppCost             Int           @default(0)
+  apCost             Int           @default(3)
+  skill              PowerSkill
   requiredSkillScore Int
-  duration PowerDuration
-  areaOfEffect AreaOfEffect
-  range PowerRange
-  effects PowerEffect[]
-  save PowerSave?
+  duration           PowerDuration
+  areaOfEffect       AreaOfEffect
+  range              PowerRange
+  effects            PowerEffect[]
+  save               PowerSave?
 }
 
 type PowerEffect {
-  type EffectType
+  type              EffectType
   typeModifierLevel EffectModifierLevel?
-  damage DamageType?
-  healing HealingType?
-  condition EffectCondition?
-  combatEffect CombatEffect?
-  movement PowerMovement?
-  sense PowerSense?
-  benefit PowerBenefit?
-  terrain PowerTerrain?
-  warding PowerWarding?
-  polymorph PowerPolymorph?
-  miscellaneous PowerMiscellaneous?
+  damage            DamageType?
+  healing           HealingType?
+  condition         EffectCondition?
+  combatEffect      CombatEffect?
+  movement          PowerMovement?
+  sense             PowerSense?
+  benefit           PowerBenefit?
+  terrain           PowerTerrain?
+  warding           PowerWarding?
+  polymorph         PowerPolymorph?
+  miscellaneous     PowerMiscellaneous?
+  damageType        DamageElement?
 }
 
 enum PowerMiscellaneous {
@@ -169,7 +170,7 @@ enum EffectType {
 }
 
 type AreaOfEffect {
-  type AOEType
+  type  AOEType
   value Int
 }
 
@@ -219,4 +220,15 @@ enum PowerSave {
   will
 }
 
-
+enum DamageElement {
+  any
+  acid
+  cold
+  electrical
+  fire
+  force
+  necrotic
+  poison
+  psychic
+  radiant
+}

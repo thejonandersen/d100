@@ -60,41 +60,47 @@ export const costCalculator = ({ data, itemizedCost }: CostCalculatorProps): Cal
             const effectsItems: CostItem = itemized.effects ? itemized.effects as CostItem : { total: 0, breakdown: {} };
             itemized.effects = effectsItems;
             console.clear()
-            effects?.forEach((effect: Effect, index) => {
-                if (!effect || !effect.type)
-                    return;
-                let value: string = effect[effect.type as keyof typeof effect] as string
-                console.log({effect, value, type: effect.type})
-                if (!value)
-                    return;
+            try {
+                effects?.forEach((effect: Effect, index) => {
+                    if (!effect || !effect.type)
+                        return;
+                    let value: string = effect[effect.type as keyof typeof effect] as string
+                    console.log({effect, value, type: effect.type})
+                    if (!value)
+                        return;
 
-                const modifier: string = effect.typeModifierLevel as string;
-                if (modifier) {
-                    diff = costMap[effect.type][value][modifier]
-                    if (effect.type === 'healing' || effect.type === 'miscellaneous') {
-                        value = `${value} ${modifier}`
-                    } else if (effect.type === 'damage') {
-                        value = `${value} damage ${modifier}`
+                    const modifier: string = effect.typeModifierLevel as string;
+                    if (modifier) {
+                        diff = costMap[effect.type][value][modifier]
+                        if (effect.type === 'healing' || effect.type === 'miscellaneous') {
+                            value = `${value} ${modifier}`
+                        } else if (effect.type === 'damage') {
+                            value = `${value} damage ${modifier}`
+                        }
+                    } else {
+                        console.log({costMap, effectType: effect.type, value})
+                        diff = costMap[effect.type][value]
                     }
-                } else {
-                    diff = costMap[effect.type][value]
-                }
 
-                if (diff === undefined || typeof diff !== 'number')
-                    return;
+                    if (diff === undefined || typeof diff !== 'number')
+                        return;
 
-                runningTotal += diff;
-                if (itemized.effects) {
-                    effectsItems.total += diff
-                    if (effectsItems.breakdown) {
-                        if (effect.type === 'healing' || effect.type === 'damage') {
-                            effectsItems.breakdown[value] = diff
-                        } else {
-                            effectsItems.breakdown[value] = diff;
+                    runningTotal += diff;
+                    if (itemized.effects) {
+                        effectsItems.total += diff
+                        if (effectsItems.breakdown) {
+                            if (effect.type === 'healing' || effect.type === 'damage') {
+                                effectsItems.breakdown[value] = diff
+                            } else {
+                                effectsItems.breakdown[value] = diff;
+                            }
                         }
                     }
-                }
-            })
+                })
+            } catch (e) {
+                console.error(e)
+            }
+
         }
 
     }

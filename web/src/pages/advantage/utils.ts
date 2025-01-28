@@ -1,7 +1,7 @@
 import {AdvantageRequirement} from "d100-libs";
 import {capitalize} from "@mui/material";
 
-export const advantageCategoryIcons = {
+export const categoryIcons = {
     "Ally_Framework": "Group",
     "Archetype": "Category",
     "Armor": "Shield",
