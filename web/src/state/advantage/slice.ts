@@ -1,9 +1,11 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, createSelector} from "@reduxjs/toolkit";
 import z from "zod";
 import {API} from "../../common/axios";
 import {CreateAdvantageSchema, UpdateAdvantageSchema} from 'd100-libs'
 
 export type Advantage = { id?: string } & z.infer<typeof CreateAdvantageSchema>
+
+const emptyArray: any[] = [];
 
 export const load = createAsyncThunk(
     'advantages/load',
@@ -55,7 +57,7 @@ const advantagesSlice = createSlice({
             return sliceState.advantages?.find(a => a.id === id)
         },
         byIds: (sliceState, ids) => {
-            return ids ? ids.map((id: string) => sliceState.advantages.find(a => a.id === id)):[]
+            return ids ? ids.map((id: string) => sliceState.advantages.find(a => a.id === id)): emptyArray
         }
     }
 })

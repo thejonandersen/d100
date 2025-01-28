@@ -8,7 +8,7 @@ model Race {
   languageIds  String[]    @db.ObjectId
   languages    Language[]  @relation(fields: [languageIds], references: [id])
   special      Json        @default("{}")
-  Character    Character[]
+  CharacterTemplates    Character[]
   advantages   Advantage[] @relation(fields: [advantageIds], references: [id])
   advantageIds String[]    @db.ObjectId
 }

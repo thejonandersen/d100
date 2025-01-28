@@ -1,0 +1,222 @@
+model Power {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  cpCost         Int         @default(0)
+  ppCost  Int @default(0)
+  apCost Int @default(3)
+  skill PowerSkill
+  requiredSkillScore Int
+  duration PowerDuration
+  areaOfEffect AreaOfEffect
+  range PowerRange
+  effects PowerEffect[]
+  save PowerSave?
+}
+
+type PowerEffect {
+  type EffectType
+  typeModifierLevel EffectModifierLevel?
+  damage DamageType?
+  healing HealingType?
+  condition EffectCondition?
+  combatEffect CombatEffect?
+  movement PowerMovement?
+  sense PowerSense?
+  benefit PowerBenefit?
+  terrain PowerTerrain?
+  warding PowerWarding?
+  polymorph PowerPolymorph?
+  miscellaneous PowerMiscellaneous?
+}
+
+enum PowerMiscellaneous {
+  create_armor
+  create_food_and_water
+  create_weapon
+  dispel_power
+  invisibility
+  telekinesis
+  water_breathing
+}
+
+enum PowerPolymorph {
+  change_appearance
+  change_form
+  change_size
+  shape_change
+}
+
+enum PowerWarding {
+  acid
+  cold
+  electrical
+  fire
+  force
+  necrotic
+  psychic
+  radiant
+}
+
+enum PowerTerrain {
+  light
+  obscured
+  difficult_terrain
+  silenced
+  solid_terrain
+}
+
+enum PowerBenefit {
+  plus_ten_to_skill_group
+  plus_twenty_to_skill_group
+  plus_thirty_to_skill_group
+  plus_ten_to_save
+  plus_twenty_to_save
+  plus_thirty_to_save
+  reroll
+  success_shift
+  extra_defense_action
+}
+
+enum PowerSense {
+  power_sight
+  lifesense
+  item
+  danger
+  low_light_vision
+  darkvision
+  blind_sight
+  true_seeing
+  telepathy
+  empathy
+}
+
+enum PowerMovement {
+  climb_duration
+  swim_duration
+  burrow
+  climb_add_to_move
+  swim_add_to_move
+  fly
+  water_walking
+  teleport
+  phasing
+  movement_equals_move
+  movement_equals_move_plus_2
+  movement_equals_move_plus_4
+  shift_2
+  shift_4
+  shift_6
+}
+
+enum CombatEffect {
+  trip
+  disarm
+  push
+  pull
+  slide
+  sunder
+  grapple
+  standard_attack
+}
+
+enum EffectCondition {
+  charm
+  dominate
+  stagger
+  slow
+  stun
+  weaken
+  blind
+  restrain
+  panic
+}
+
+enum DamageType {
+  energy
+  direct
+  ongoing
+  siphon
+  elemental_bonus
+  extra_weapon
+}
+
+enum HealingType {
+  healing
+  regeneration
+  save_vs_condition
+  temp_HP
+}
+
+enum EffectModifierLevel {
+  low
+  medium
+  high
+  superior
+}
+
+enum EffectType {
+  damage
+  healing
+  condition
+  combat_effect
+  movement
+  sense
+  benefit
+  terrain
+  warding
+  polymorph
+  miscellaneous
+}
+
+type AreaOfEffect {
+  type AOEType
+  value Int
+}
+
+enum AOEType {
+  burst
+  aura
+  blast
+  wall
+  trap
+  target
+}
+
+enum PowerRange {
+  personal
+  touch
+  ten
+  twenty
+  fourty
+}
+
+enum PowerSkill {
+  divination
+  energy
+  life
+  mind
+  melee
+  thrown
+  projectile
+  athletics
+  interaction
+  lore
+  observation
+}
+
+enum PowerDuration {
+  no_duration
+  one_minute
+  one_hour
+  eight_hours
+  twenty_four_hours
+  save_ends
+}
+
+enum PowerSave {
+  stamina
+  agility
+  will
+}
+
+

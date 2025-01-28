@@ -5,6 +5,8 @@ model Advantage {
   raceIds      String[]               @db.ObjectId
   characters   Character[]            @relation(fields: [characterIds], references: [id])
   characterIds String[]               @db.ObjectId
+  characterTemplates   CharacterTemplate[]            @relation(fields: [characterTemplateIds], references: [id])
+  characterTemplateIds String[]               @db.ObjectId
   category     AdvantageCategory
   requirements AdvantageRequirement[]
   cost         Int                    @default(0)
@@ -15,7 +17,7 @@ model Advantage {
 type AdvantageRequirement {
   type        AdvantageRequirementType
   skill       Skill?
-  power       Power?
+  power       PowerName?
   stat        StatName?
   raceId      String?                  @db.ObjectId
   advantageId String?                  @db.ObjectId

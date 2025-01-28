@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Grid2, Typography} from "@mui/material";
+import {Box, Grid2, SxProps, Typography} from "@mui/material";
 
 export const GridWrap: React.FC<{ children: React.ReactElement, gridWrap: boolean, gridSize: number }> = ({
     children, gridWrap, gridSize
@@ -20,11 +20,11 @@ export const StyleWrap: React.FC<{ children: React.ReactElement, sx: any }> = ({
 };
 
 export const LabeledObject: React.FC<{
-    children: React.ReactElement, label: string, shouldLabelObjects: boolean | undefined
-}> = ({children, label, shouldLabelObjects}) => {
+    children: React.ReactElement, label: string, shouldLabelObjects: boolean | undefined, sx?: SxProps
+}> = ({children, label, shouldLabelObjects, sx={}}) => {
     return (<>
-        {shouldLabelObjects ? (<Box>
-            <Typography>{label}</Typography>
+        {shouldLabelObjects ? (<Box sx={sx}>
+            <Typography sx={{mb: 1}}>{label}</Typography>
             {children}
         </Box>) : (<>{children}</>)}
     </>);

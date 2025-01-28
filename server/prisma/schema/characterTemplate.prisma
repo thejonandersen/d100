@@ -1,0 +1,16 @@
+model CharacterTemplate {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  skills       TemplateSkill[]
+  cost         Int             @default(0)
+  languages    Language[]      @relation(fields: [languageIds], references: [id])
+  languageIds  String[]        @default([]) @db.ObjectId
+  advantages   Advantage[]     @relation(fields: [advantageIds], references: [id])
+  advantageIds String[]        @default([]) @db.ObjectId
+  special      Json[]          @default([])
+}
+
+type TemplateSkill {
+  name  Skill
+  bonus Int   @default(0)
+}

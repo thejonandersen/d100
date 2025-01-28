@@ -1,0 +1,10 @@
+model Language {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  raceIds      String[]    @db.ObjectId
+  races        Race[]      @relation(fields: [raceIds], references: [id])
+  characterIds String[]    @db.ObjectId
+  characters   Character[] @relation(fields: [characterIds], references: [id])
+  characterTemplateIds String[]    @db.ObjectId
+  characterTemplates   CharacterTemplate[] @relation(fields: [characterTemplateIds], references: [id])
+}

@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {Route, Routes} from "react-router";
 import {useAppSelector} from '../state/hooks';
 import {useLocation, useNavigate} from 'react-router';
-import {Login, Home, Advantages, Races, Character, Language, CreateOrEditAdvantage, CreateOrEditRace} from '../pages/';
+import {Login, Home, Advantages, Races, CharacterTemplates, Language, CreateOrEditAdvantage, CreateOrEditRace, CreateOrEditCharacterTemplate, CreateOrEditPower, Powers} from '../pages/';
 import {User as UserPage} from '../pages/User';
 import {ProtectedRoute} from './ProtectedRoute';
 import {User} from '../state/user/slice'
@@ -42,9 +42,34 @@ export const AppRoutes = () => {
                         <CreateOrEditAdvantage />
                     </ProtectedRoute>
                 }/>
-                <Route path="character" element={
+                <Route path="character-template/create" element={
                     <ProtectedRoute user={user.current as User}>
-                        <Character />
+                        <CreateOrEditCharacterTemplate />
+                    </ProtectedRoute>
+                }/>
+                <Route path="character-template/edit/:id" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <CreateOrEditCharacterTemplate />
+                    </ProtectedRoute>
+                }/>
+                <Route path="character-template" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <CharacterTemplates />
+                    </ProtectedRoute>
+                }/>
+                <Route path="power/create" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <CreateOrEditPower />
+                    </ProtectedRoute>
+                }/>
+                <Route path="power/edit/:id" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <CreateOrEditPower />
+                    </ProtectedRoute>
+                }/>
+                <Route path="power" element={
+                    <ProtectedRoute user={user.current as User}>
+                        <Powers />
                     </ProtectedRoute>
                 }/>
                 <Route path="language" element={

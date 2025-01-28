@@ -5,6 +5,8 @@ import advantagesReducer from './advantage/slice';
 import formReducer from "./form/slice";
 import raceReducer from "./race/slice";
 import languageReducer from "./language/slice";
+import characterTemplateReducer from "./characterTemplates/slice";
+import powerReducer from "./power/slice";
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
         form: formReducer,
         race: raceReducer,
         language: languageReducer,
+        characterTemplate: characterTemplateReducer,
+        power: powerReducer,
     },
 });
 

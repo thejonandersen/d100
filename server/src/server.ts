@@ -7,6 +7,8 @@ import {pino} from "pino";
 import advantageRouter from "@/api/advantage/router";
 import languageRouter from "@/api/language/router";
 import raceRouter from "@/api/race/router";
+import characterTemplateRouter from "@/api/characterTemplate/router"
+import powerRouter from "@/api/power/router";
 import {userRouter} from "@/api/user/userRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
@@ -37,6 +39,8 @@ app.use("/user", userRouter);
 app.use("/race", raceRouter);
 app.use("/language", languageRouter);
 app.use("/advantage", advantageRouter);
+app.use("/character-template", characterTemplateRouter);
+app.use("/power", powerRouter);
 
 // Error handlers
 app.use(errorHandler());

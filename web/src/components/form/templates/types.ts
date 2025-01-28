@@ -14,6 +14,7 @@ export type FormRootProps = {
         url: string;
         id?: string;
     }
+    submit?: (data: any) => void;
 };
 
 type BaseTemplateProps = {
@@ -64,7 +65,10 @@ export type AsyncSelectionTemplateProps = BaseTemplateProps & {
     props: DynamicSelectionProps
 }
 
-export type ArrayItemProps = ConditionalTemplateProps
+export type ArrayItemProps = ConditionalTemplateProps & {
+    index: number;
+    remove: (index: number) => void;
+}
 
 export type JSONStringTemplateProps = BaseTemplateProps & {
     schema: typeof JSONSchema;

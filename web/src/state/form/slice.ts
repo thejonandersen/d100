@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, createSelector, current} from "@reduxjs/toolkit";
 import {API} from "../../common/axios";
-import _ from 'lodash';
 import {RootState} from '../store'
+import {isEqual, get, set} from '../../common/utils';
 
 export interface Form {
     [key: string]: any
@@ -62,8 +62,8 @@ const formSlice = createSlice({
         clearAll: state => ({...state, forms: {}, status: 'idle'}),
         updateFormData: (state, action) => {
             const {data, path}: { id: string, data: any, path: string } = action.payload;
-            if (!_.isEqual(_.get(state.forms, path), data)) {
-                _.set(state.forms, path, data);
+            if (!isEqual(get(state.forms, path), data)) {
+                set(state.forms, path, data);
                 state.status = 'dirty';
             }
         }
@@ -76,11 +76,11 @@ const formSlice = createSlice({
                     if (parts.length > 1) {
                         parts.pop()
                     }
-                    return _.get(state.forms, parts.join('.'));
+                    return get(state.forms, parts.join('.'));
                 }
             ],
             memo => {
-                return _.get(memo, path.split('.').pop() as string) as any
+                return get(memo, path.includes('.') ? path.split('.').pop() as string : '') as any
             }
         )(state),
         status: state => state.status,

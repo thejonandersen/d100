@@ -51,6 +51,11 @@ export function DrawerNav() {
             uri: 'character',
             icon: 'Face',
         },
+        {
+            label: 'Powers',
+            uri: 'power',
+            icon: 'Bolt',
+        },
     ]
 
     // menu view/create/edit

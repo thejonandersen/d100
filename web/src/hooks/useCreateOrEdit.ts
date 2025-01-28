@@ -1,27 +1,35 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from '../state/hooks'
-import useCalculateCost from './useCalculateCost'
+import useCalculateCost, {CostCalculator} from './useCalculateCost'
 import {mergedFormsData, status, submitForm} from '../state/form/slice'
+import {allSlices, Slices} from '../state/slices'
 import z from 'zod'
-import _ from 'lodash'
+import {isEqual} from '../common/utils'
 
-export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, slice: any,  url: string, submitCost: boolean = false) => {
+type CreateOrEditProps = {
+    id: string | undefined;
+    schema: z.ZodTypeAny;
+    key: string;
+    costCalculator?: CostCalculator;
+    preSubmitProcess?: (data: any, cost: number) => any;
+}
+
+export const useCreateOrEdit = ({id, schema, key, costCalculator, preSubmitProcess}: CreateOrEditProps) => {
     const [shouldRender, setShouldRender] = useState(false);
     const [isValid, setIsValid] = useState<boolean>(false);
     const [canSubmit, setCanSubmit] = useState<boolean>(false);
     const [data, setData] = useState<any>({})
-    const {byId, load} = slice;
-    const initialData = useAppSelector(state => byId(state, id));
+    const {byId, load} = allSlices[key as keyof Slices];
+    const initialData: any = useAppSelector(state => byId(state, id));
     const formStatus = useAppSelector(status);
     const merged = useAppSelector(mergedFormsData);
     const dispatch = useAppDispatch();
-    const {cost, itemizedCost} = useCalculateCost(data);
+    const {cost, itemizedCost} = useCalculateCost(data, costCalculator);
 
     const submit = () => {
-        if (submitCost) {
-            data.cost = cost;
-        }
-        dispatch(submitForm({url, id, data}))
+        const payload = preSubmitProcess ? preSubmitProcess(data, cost) : data;
+        console.log(data, payload)
+        dispatch(submitForm({url: key, id, data: payload}))
     }
 
     useEffect(() => {
@@ -36,6 +44,7 @@ export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, sl
 
         if (initialData) {
             setShouldRender(true)
+            setData(initialData)
         }
     }, [id, initialData]);
 
@@ -44,16 +53,12 @@ export const useCreateOrEdit = (id: string | undefined, schema: z.ZodTypeAny, sl
             return
         }
 
-        if (_.isEqual(data, merged)) {
+        if (isEqual(data, merged)) {
             return;
         }
 
-        console.log(schema.safeParse(merged), merged)
-
-        setIsValid(schema.safeParse(merged).success);
         setData(merged);
-
-        console.log(merged)
+        setIsValid(schema.safeParse(merged).success);
     }, [merged])
 
     useEffect(() => {

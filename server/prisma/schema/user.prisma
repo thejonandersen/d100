@@ -2,6 +2,6 @@ model User {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   email      String      @unique
   password   String?
-  characters Character[]
+  character         Character[]
   name       String?
 }

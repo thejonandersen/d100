@@ -13,10 +13,3 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-
-model Language {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  raceIds String[] @db.ObjectId
-  races   Race[]   @relation(fields: [raceIds], references: [id])
-}

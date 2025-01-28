@@ -1,28 +1,32 @@
-import {useState, useEffect, useReducer} from 'react';
-import z from 'zod'
-import {StatSchema, Stat as StatName} from "d100-libs";
+import {useState, useEffect} from 'react';
 import {byIds} from '../state/advantage/slice'
-import {getTypedProperty} from '../common/utils'
 import {useAppSelector} from '../state/hooks'
-import _ from 'lodash'
-
-type Stat = z.infer<typeof StatSchema>
+import {isEqual} from '../common/utils'
 
 export type CostItem = {
-    total: number,
+    total: number;
     breakdown?: {
-        [key: string]: number,
+        [key: string]: number;
     }
 }
 
 export type Itemization = {
-    stats: CostItem,
-    move: number,
-    languages: number,
-    advantages: CostItem,
+    [key: string]: CostItem | number;
 }
 
-const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: Itemization} => {
+export type Costs = {
+    cost: number;
+    itemizedCost: Itemization;
+}
+
+export type CalculatorResult = {
+    calculatedCost: number;
+    calculatedItemization: Itemization;
+}
+
+export type CostCalculator = (data: any) => CalculatorResult
+
+const useCalculateCost = (mergedData: any, calculator?: CostCalculator): Costs => {
     const [itemizedCost, setItemizedCost] = useState<Itemization>({
         stats: {
             total: 0,
@@ -35,70 +39,27 @@ const useCalculateCost = (mergedData: any): {cost: number, itemizedCost: Itemiza
     });
     const [cost, setCost] = useState(0);
     const [data, setData] = useState<any>();
-    const [advantageIds, setAdvantageIds] = useState<string[]>([]);
+    const [advantageIds, setAdvantageIds] = useState<string[]>();
     const advantages = useAppSelector(state => byIds(state, advantageIds))
 
     useEffect(() => {
-        if (!data) {
+        console.log({data})
+        if (!data || !calculator) {
             return;
         }
-        let runningTotal = 0;
-        let itemized = {...itemizedCost};
-        const {advantageIds: newIds, languageIds, move, stats} = data;
+        const {calculatedCost, calculatedItemization} = calculator({data, advantages});
 
-        if (languageIds && languageIds.length ) {
-            const diff = (languageIds.length - 1) * 3;
-            itemized.languages = diff;
-            runningTotal += diff;
+        if (!isEqual(calculatedItemization, itemizedCost)) {
+            setItemizedCost(calculatedItemization);
         }
 
-        if (move) {
-            const diff = (move - 6) * 10
-            itemized.move = diff;
-            runningTotal += diff;
-        }
-
-        if (stats) {
-            let diff = 0;
-            itemized.stats = stats ? Object.keys(stats).reduce((pre: any, cur: string) => {
-                const item: Stat = getTypedProperty(stats, cur as NonNullable<StatName>);
-                if (item.max !== 20) {
-                    diff = (item.max - 20) * 3;
-                    pre.total += diff;
-                    pre.breakdown[cur] = diff;
-                }
-
-                runningTotal += diff;
-
-                return pre;
-            }, { total: 0, breakdown: {} }) : { total: 0 }
-        }
-
-        if(advantages) {
-            let diff = 0;
-            itemized.advantages = advantages.reduce((pre: any, cur: any) => {
-                if (cur) {
-                    diff = cur.cost;
-                    runningTotal += diff;
-                    console.log(pre)
-                    pre.total += diff;
-                    pre.breakdown[cur.name] = diff;
-                }
-                return pre
-            }, { total: 0, breakdown: {} })
-        }
-
-        if (!_.isEqual(itemized, itemizedCost)) {
-            setItemizedCost(itemized);
-        }
-
-        if (cost !== runningTotal) {
-            setCost(runningTotal);
+        if (cost !== calculatedCost) {
+            setCost(calculatedCost);
         }
     }, [data, advantages]);
 
     useEffect(() => {
-        if (!mergedData || _.isEqual(mergedData, data))
+        if (!mergedData || isEqual(mergedData, data))
             return;
 
         setData(mergedData);

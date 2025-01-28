@@ -11,10 +11,10 @@ model Character {
   currentPP    Int?
   points       Int?
   pointsSpent  Int?
-  languages    String[]
+  languages    Language[] @relation(fields: [languageIds], references: [id])
+  languageIds String[] @db.ObjectId
   advantages   Advantage[] @relation(fields: [advantageIds], references: [id])
   advantageIds String[]    @db.ObjectId
-  special      Json[]    @default([])
 }
 
 type StatBlock {
@@ -145,7 +145,7 @@ enum Skill {
   stealth
 }
 
-enum Power {
+enum PowerName {
   divination
   energy
   life

@@ -1,12 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 import {z} from "zod";
-import {Box, Button, capitalize, IconButton, InputLabel} from "@mui/material";
+import {Box, Button, capitalize, Collapse, IconButton, IconButtonProps, InputLabel, BoxProps} from "@mui/material";
 import {RenderTemplate} from "./RenderTemplate";
 import {resolveSchema} from "../utils";
 import {ArrayItemProps, ArrayTemplateProps} from "./types";
 import IconResolver from "../../IconResolver";
 import {getValue, updateFormData} from '../../../state/form/slice'
 import {useAppDispatch, useAppSelector} from '../../../state/hooks'
+import {styled} from '@mui/material/styles'
+import {cloneDeep} from 'lodash'
+import {singularize} from '../../../common/utils';
 
 
 // Ensure the inner schema is correctly typed
@@ -14,30 +17,84 @@ const getInnerSchema = (schema: z.ZodArray<any>): z.ZodTypeAny => {
     return schema.element;
 };
 
+interface ExpandMoreProps extends IconButtonProps {
+    expand: boolean;
+}
+
+const ExpandMore = styled((props: ExpandMoreProps) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme }) => ({
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+    padding: 0,
+    variants: [
+        {
+            props: ({ expand }) => !expand,
+            style: {
+                transform: 'rotate(0deg)',
+            },
+        },
+        {
+            props: ({ expand }) => !!expand,
+            style: {
+                transform: 'rotate(180deg)',
+            },
+        },
+    ],
+}));
+
+const getLabel = (name: string): string => {
+    const secondSplit = name.split('[')[0];
+    return secondSplit ? singularize(secondSplit):singularize(name);
+}
+
 // Array Item
-const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId}) => {
+const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, index, remove}) => {
     const resolvedSchema = resolveSchema(schema);
-    const displayName: string = name ? name.split(".").pop() as string : "";
+    const itemName = name ? name.split('.').pop() : name;
+    const displayName: string = name ? getLabel(itemName as string) : "";
+    const [expanded, setExpanded] = useState(false);
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
     return (<Box sx={{
         p: 2, border: "1px solid rgba(0,0,0,0.3)", borderRadius: "4px", minWidth: "100%"
     }}>
         <Box
-            sx={{
-                display: "flex", justifyContent: "space-between", pb: 1
-            }}
+            sx={{ display: "flex", justifyContent: "space-between", pb: expanded ? 1: 0 }}
+            onClick={handleExpandClick}
         >
-            <InputLabel>{capitalize(displayName.replace("s", ""))}:</InputLabel>
-            <IconButton onClick={() => {
-            }}>
-                <IconResolver iconName="Delete" color="error"/>
-            </IconButton>
+                <InputLabel>{`${capitalize(displayName)}[${index}]`}:</InputLabel>
+                <ExpandMore
+                    expand={expanded}
+                >
+                    <IconResolver iconName="ExpandMore" />
+                </ExpandMore>
         </Box>
-        <RenderTemplate
-            schema={resolvedSchema}
-            name={displayName}
-            gridSize={gridSize}
-            formId={formId}
-        />
+        <Collapse in={expanded}>
+            <Box sx={{mt: '5px'}}>
+                <RenderTemplate
+                    schema={resolvedSchema}
+                    name={itemName}
+                    gridSize={gridSize}
+                    formId={formId}
+                />
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "flex-end"
+                }}
+            >
+                <IconButton sx={{p: 0}} onClick={() => remove(index)}>
+                    <IconResolver iconName="Delete" color="error"/>
+                </IconButton>
+            </Box>
+        </Collapse>
     </Box>);
 };
 
@@ -47,9 +104,20 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
     const path = `${formId}.${name}`;
     const values = useAppSelector((state) => getValue(state, path));
     const dispatch = useAppDispatch();
-    const displayName: string = name ? name.split(".").pop() as string : "";
+    const displayName: string = name ? singularize(name.split(".").pop() as string) : "";
     const handleAdd = (e: any) => {
-        dispatch(updateFormData({id: formId, path: `${path}[${[values.length]}]`, data: {}}));
+        if (values?.length) {
+            dispatch(updateFormData({id: formId, path: `${path}[${[values.length]}]`, data: {}}));
+        } else {
+            dispatch(updateFormData({id: formId, path, data: [{}]}));
+        }
+
+    }
+    const handleRemove = (i: number) => {
+        const intermediate = cloneDeep(values);
+        intermediate.splice(i, 1);
+        console.log(intermediate.length);
+        dispatch(updateFormData({id: formId, path, data: intermediate}))
     }
     if (innerSchema.description) {
         try {
@@ -75,6 +143,8 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
                 formId={formId}
                 shouldLabelObjects={shouldLabelObjects}
                 key={`${name}[${index}]`}
+                index={index}
+                remove={handleRemove}
             />);
         })}
         <Button
@@ -83,7 +153,7 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
             color="success"
             startIcon={<IconResolver iconName="Add"/>}
         >
-            Add {capitalize(displayName.replace("s", ""))}
+            Add {capitalize(displayName)}
         </Button>
     </>);
 };

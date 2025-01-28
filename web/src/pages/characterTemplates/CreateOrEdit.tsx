@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Alert,
     Box,
@@ -13,44 +13,23 @@ import {
     InputBase,
     Skeleton,
     Tooltip,
-    Typography,
     Zoom
 } from "@mui/material";
-import {CreateRaceSchema} from "d100-libs";
-import z from "zod";
+
+import {CreateCharacterTemplateSchema} from "d100-libs";
 import {Form} from "../../components/form";
 import {useParams} from "react-router";
 import {resolveSchema} from "../../components/form/utils";
 import IconResolver from '../../components/IconResolver';
 import {useCreateOrEdit} from "../../hooks/useCreateOrEdit";
-import {costCalculator} from './costCalculator'
 
-export const CreateOrEditRace = () => {
+export const CreateOrEditCharacterTemplate = () => {
     const {id} = useParams();
-    const {initialData, shouldRender, cost, itemizedCost, submit, canSubmit} = useCreateOrEdit({
-        id,
-        schema: resolveSchema(CreateRaceSchema),
-        key: 'race',
-        costCalculator,
-        preSubmitProcess: (data, cost) => ({...data, cost}),
-    });
+    const {initialData, shouldRender, cost, itemizedCost, submit, canSubmit} = useCreateOrEdit({id, schema: resolveSchema(CreateCharacterTemplateSchema), key: 'character-template'});
     const [message, setMessage] = useState<string | null>(null);
     const [severity, setSeverity] = useState<any>();
 
-    const resolvedSchema: any = resolveSchema(CreateRaceSchema);
-    const stats = resolvedSchema.shape.stats;
-
-    const topFormSchemas = z.object({
-        name: resolvedSchema.shape.name,
-        type: resolvedSchema.shape.type,
-        move: resolvedSchema.shape.move,
-        languageIds: resolvedSchema.shape.languageIds,
-        advantageIds: resolvedSchema.shape.advantageIds
-    });
-
-    const bottomFormSchemas = z.object({
-        special: resolvedSchema.shape.special
-    });
+    const resolvedSchema: any = resolveSchema(CreateCharacterTemplateSchema);
 
     const clearMessages = (e: React.FocusEvent<HTMLInputElement>) => {
         setSeverity("");
@@ -69,46 +48,15 @@ export const CreateOrEditRace = () => {
             <Grid2 container spacing={3}>
                 <Grid2 size={10}>
                     <Card>
-                        <CardHeader title={`${initialData ? "Edit" : "Create New"} Race`}></CardHeader>
+                        <CardHeader title={`${initialData ? "Edit" : "Create New"} Character Template`}></CardHeader>
                         <CardContent>
                             {shouldRender ? (<>
                                 <Form
-                                    schema={topFormSchemas}
-                                    initialData={{
-                                        name: initialData?.name,
-                                        type: initialData?.type,
-                                        move: initialData?.move,
-                                        languageIds: initialData?.languageIds,
-                                        advantageIds: initialData?.advantageIds
-                                    }}
+                                    schema={resolvedSchema}
+                                    initialData={initialData}
                                     columns={3}
                                     id="top"
                                 />
-                                <Typography variant="h6" sx={{pt: 1}}>Starting Stats</Typography>
-                                <Box sx={{
-                                    p: 2,
-                                    border: "1px solid rgba(0, 0, 0, 0.25)",
-                                    my: 1,
-                                    borderRadius: 1
-                                }}>
-
-                                    <Form
-                                        schema={stats}
-                                        initialData={initialData?.stats}
-                                        columns={4}
-                                        labelObjects
-                                        id="middle/stats"
-                                    />
-                                </Box>
-                                <Box sx={{pt: 1}}>
-                                    <Form
-                                        schema={bottomFormSchemas}
-                                        initialData={{
-                                            special: initialData?.special
-                                        }}
-                                        id="bottom"
-                                    />
-                                </Box>
                             </>) : <>
                                 <Skeleton/>
                                 <Skeleton/>

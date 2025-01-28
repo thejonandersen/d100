@@ -21,7 +21,6 @@ const useTemplateData = ({formId, name}: useTemplateDataParams): useTemplateData
     const displayName: string = name ? name.split(".").pop() as string : "";
     const handleChange = (e: any, _?: any, isNumber?: boolean) => {
         if (e.target?.value) {
-            console.log(e.target.value)
             dispatch(updateFormData({ id: formId, path, data: isNumber ? Number(e.target.value): e.target.value }));
         } if (e.newData) {
             dispatch(updateFormData({ id: formId, path, data: JSON.stringify(e.newData) }));

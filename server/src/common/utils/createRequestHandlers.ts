@@ -10,9 +10,11 @@ const getConnection = (modelName: string) => {
     const prisma = new PrismaClient();
     const prismaHash = {
         "character": prisma.character,
+        "characterTemplate": prisma.characterTemplate,
         "race": prisma.race,
         "language": prisma.language,
         "advantage": prisma.advantage,
+        "power": prisma.power,
     };
     const {key} = {key: modelName} as { key: keyof typeof prismaHash };
 
