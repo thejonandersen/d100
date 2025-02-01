@@ -77,6 +77,13 @@ export const costCalculator = ({ data, itemizedCost }: CostCalculatorProps): Cal
                         if (!value)
                             return;
 
+                        console.log(effect.type, value);
+
+                        if (effect.type === 'sense' && value === 'danger' && apCost === 0) {
+                            itemized.apCost = 0;
+                            runningTotal -= 5;
+                        }
+
                         const modifier: string = effect.typeModifierLevel as string;
                         if (modifier) {
                             diff = costMap[effect.type][value][modifier]

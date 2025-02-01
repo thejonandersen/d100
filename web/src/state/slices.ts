@@ -17,25 +17,35 @@ export const allSlices= {
         load: advantage.load,
         all: advantage.all,
         byId: advantage.byId,
+        created: advantage.created,
+        updated: advantage.updated,
     },
     race: {
         load: race.load,
         all: race.all,
         byId: race.byId,
+        created: race.created,
+        updated: race.updated,
     },
     language: {
         load: language.load,
         all: language.all,
         byId: language.byId,
+        created: language.created,
+        updated: language.updated,
     },
     characterTemplate: {
         load: characterTemplates.load,
         all: characterTemplates.all,
         byId: characterTemplates.byId,
+        created: characterTemplates.created,
+        updated: characterTemplates.updated,
     },
     power: {
         load: power.load,
         all: power.all,
         byId: power.byId,
+        created: power.created,
+        updated: power.updated,
     }
 }

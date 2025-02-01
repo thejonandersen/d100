@@ -33,7 +33,15 @@ const initialState: PowersState = {
 const powersSlice = createSlice({
     name: 'power',
     initialState,
-    reducers: {},
+    reducers: {
+        created: (state, action) => {
+            state.powers.push(action.payload);
+        },
+        updated: (state, action) => {
+            const index = state.powers.findIndex(power => power.id === action.payload.id);
+            state.powers[index] = action.payload;
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(load.pending, (state) => {
@@ -59,6 +67,8 @@ const powersSlice = createSlice({
         }
     }
 })
+
+export const {created, updated} = powersSlice.actions;
 
 export const {all, byId, byIds} = powersSlice.selectors;
 

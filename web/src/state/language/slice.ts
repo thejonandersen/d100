@@ -31,7 +31,15 @@ const initialState: LanguagesState = {
 const languagesSlice = createSlice({
     name: 'language',
     initialState,
-    reducers: {},
+    reducers: {
+        created: (state, action) => {
+            state.languages.push(action.payload);
+        },
+        updated: (state, action) => {
+            const index = state.languages.findIndex(language => language.id === action.payload.id);
+            state.languages[index] = action.payload;
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(load.pending, (state) => {
@@ -54,6 +62,8 @@ const languagesSlice = createSlice({
         }
     }
 })
+
+export const {created, updated} = languagesSlice.actions;
 
 export const {all, byId} = languagesSlice.selectors;
 

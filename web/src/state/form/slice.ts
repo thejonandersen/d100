@@ -22,13 +22,14 @@ type SubmitFormPayload = {
     url: string;
     id?: string;
     data?: any;
+    onComplete?: (success: boolean, data?: any) => void;
 }
 
 const emptyKeys: string[] = [];
 
 export const submitForm = createAsyncThunk(
     "form/submit",
-    async ({url, id, data, keys = []}: SubmitFormPayload, {getState}) => {
+    async ({url, id, data, keys = [], onComplete}: SubmitFormPayload, {getState}) => {
         const state: RootState = getState() as RootState;
         const path = `${url}${id ? `/${id}`:''}`;
         let submitData: any = data ? data : keys.reduce((pre, cur) => ({...pre, ...state.form.forms[cur]}), {});
@@ -39,9 +40,14 @@ export const submitForm = createAsyncThunk(
         try {
             const response: any = await API.post(path, submitData);
             console.log({response});
+            if (onComplete) {
+                onComplete(true, response);
+            }
             return response;
         } catch (e: any) {
-            console.error(e);
+            if (onComplete) {
+                onComplete(false, e);
+            }
             return Promise.reject()
         }
     });

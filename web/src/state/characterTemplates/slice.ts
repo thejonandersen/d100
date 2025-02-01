@@ -33,7 +33,15 @@ const initialState: CharacterTemplatesState = {
 const characterTemplatesSlice = createSlice({
     name: 'characterTemplate',
     initialState,
-    reducers: {},
+    reducers: {
+        created: (state, action) => {
+            state.characterTemplates.push(action.payload);
+        },
+        updated: (state, action) => {
+            const index = state.characterTemplates.findIndex(template => template.id === action.payload.id);
+            state.characterTemplates[index] = action.payload;
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(load.pending, (state) => {
@@ -59,6 +67,8 @@ const characterTemplatesSlice = createSlice({
         }
     }
 })
+
+export const {created, updated} = characterTemplatesSlice.actions;
 
 export const {all, byId, byIds} = characterTemplatesSlice.selectors;
 

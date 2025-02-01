@@ -1,11 +1,7 @@
 # Frontend TODOs order (kinda):
 * Further restrict power effect choices based on selections to reflect rules.
-* Refresh collections on edit/create
 * Finish Race Modal
 * Power Modal
-* Messaging on create/edit pages
-  * success
-  * failure
 * Character
   * List page (mine)
   * create/edit

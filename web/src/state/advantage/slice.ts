@@ -35,7 +35,15 @@ const initialState: AdvantagesState = {
 const advantagesSlice = createSlice({
     name: 'advantage',
     initialState,
-    reducers: {},
+    reducers: {
+        created: (state, action) => {
+            state.advantages.push(action.payload);
+        },
+        updated: (state, action) => {
+            const index = state.advantages.findIndex(advantage => advantage.id === action.payload.id);
+            state.advantages[index] = action.payload;
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(load.pending, (state) => {
@@ -61,6 +69,8 @@ const advantagesSlice = createSlice({
         }
     }
 })
+
+export const {created, updated} = advantagesSlice.actions;
 
 export const {all, byId, byIds} = advantagesSlice.selectors;
 

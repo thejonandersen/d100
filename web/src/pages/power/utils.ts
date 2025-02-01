@@ -16,4 +16,4 @@ export const categoryIcons = {
     "observation": "Radar"
 };
 
-export const getRequirement = (cost: number = 0) => Math.max(((cost - 1)*25)+1, 0)
+export const getRequirement = (cost: number = 0) => Math.max(((cost - 1)*25)+1, 1)

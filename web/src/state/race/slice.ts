@@ -31,7 +31,15 @@ const initialState: RacesState = {
 const racesSlice = createSlice({
     name: 'race',
     initialState,
-    reducers: {},
+    reducers: {
+        created: (state, action) => {
+            state.races.push(action.payload);
+        },
+        updated: (state, action) => {
+            const index = state.races.findIndex(race => race.id === action.payload.id);
+            state.races[index] = action.payload;
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(load.pending, (state) => {
@@ -54,6 +62,8 @@ const racesSlice = createSlice({
         }
     }
 })
+
+export const {created, updated} = racesSlice.actions;
 
 export const {all, byId} = racesSlice.selectors;
 
