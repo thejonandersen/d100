@@ -6,9 +6,14 @@ export const categoryIcons = {
     "planar": "Compare",
     "melee": "SportsKabaddi",
     "thrown": "SportsHandball",
-    "projectile": "TrendingFlat",
+    "projectile": "ArrowOutward",
     "athletics": "FitnessCenter",
-    "interaction": "Announcement",
-    "lore": "LocalLibrary",
+    "interaction": "TheaterComedy",
+    "lore_nature": "Nature",
+    "lore_arcana": "AutoFixHigh",
+    "lore_technology": "SettingsSuggest",
+    "lore_social": "ConnectWithoutContact",
     "observation": "Radar"
 };
+
+export const getRequirement = (cost: number = 0) => Math.max(((cost - 1)*25)+1, 0)

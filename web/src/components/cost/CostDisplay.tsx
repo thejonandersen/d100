@@ -17,7 +17,7 @@ export const CostDisplay: React.FC<CostDisplayProps> = ({cost, itemization, titl
             <CardHeader title={title}/>
             <Box width="100%" sx={{flexDirection: "row", display: "flex", alignItems: 'center'}}>
                 <InputBase
-                    sx={{ml: 1, flex: 1, fontSize: 30}}
+                    sx={{ml: 2, flex: 1, fontSize: 30}}
                     placeholder="0"
                     value={cost}
                 />

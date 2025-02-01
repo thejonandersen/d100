@@ -1,5 +1,15 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Button, Container, List, ListItemButton, ListItemIcon, ListItemText, Paper} from '@mui/material'
+import {
+    Box,
+    Button,
+    capitalize,
+    Container,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Paper
+} from '@mui/material'
 import IconResolver from '../../components/IconResolver'
 import {Power} from '../../state/power/slice'
 import {PowerSkillSchema} from 'd100-libs'
@@ -20,7 +30,7 @@ export const Powers = () => {
         special
     } = useCollectionPage('power');
     const [categories, setCategories] = useState<PowerCategory[]>([])
-    const [openCategory, setOpenCategory] = useState<PowerCategory|null>()
+    const [openCategory, setOpenCategory] = useState<PowerCategory | null>()
 
     const toggleOpen = (cat: PowerCategory) => {
         if (openCategory === cat) {
@@ -40,7 +50,7 @@ export const Powers = () => {
                     categories.push(power.skill);
                 }
             });
-            setCategories(categories);
+            setCategories(categories.sort());
             setOpenCategory(categories[0]);
         }
     }, [powers])
@@ -69,47 +79,45 @@ export const Powers = () => {
                             <ListItemButton
                                 alignItems="flex-start"
                                 onClick={() => toggleOpen(category)}
-                                sx={[
-                                    {
-                                        px: 3,
-                                        pt: 2,
-                                        pb: 2,
-                                        backgroundColor: openCategory === category ? 'rgba(0,0,0,0.05)' : 'inherit',
-                                        boxShadow: openCategory === category ? '0px 2px 4px rgba(0,0,0,0.3)' : 'none',
-                                        borderTop: openCategory !== category && index !== 0 ? '1px solid rgba(0,0,0,0.1)': 'none',
-                                        transition: '0.2s'
-                                    }
-                                ]}
+                                selected={openCategory === category}
+                                dense={openCategory !== category}
+                                sx={theme => ({
+                                    px: 3,
+                                    py: 2,
+                                    boxShadow: openCategory === category ? theme.shadows[3] : theme.shadows[0],
+                                    borderTop: openCategory !== category && index !== 0 ? `1px solid ${theme.palette.grey[200] }`: 'none',
+                                    transition: '0.2s',
+                                    zIndex: theme.zIndex.drawer - 1
+                                })}
 
                             >
-                                <ListItemIcon sx={{ color: 'inherit', mt: 0 }}>
-                                    <IconResolver iconName={categoryIcons[category]} />
+                                <ListItemIcon sx={{color: 'inherit', mt: 0}}>
+                                    <IconResolver iconName={categoryIcons[category]} sx={(theme: any) => ({
+                                        color: openCategory === category ? theme.palette.common.black : theme.palette.grey[500]
+                                    })}/>
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary={category && category.replace('_', ' ')}
-                                    sx={{ my: 0 }}
+                                    primary={category && capitalize(category.replace('_', ' '))}
+                                    sx={(theme: any) => ({
+                                        color: openCategory === category ? theme.palette.common.black : theme.palette.grey[500]
+                                    })}
                                 />
                                 <KeyboardArrowDown
-                                    sx={[
-                                        {
-                                            mr: -1,
-                                            transition: '0.2s',
-                                        },
-                                        openCategory === category
-                                            ? {
-                                                transform: 'rotate(-180deg)',
-                                            }
-                                            : {
-                                                transform: 'rotate(0)',
-                                            },
-                                    ]}
+                                    sx={theme => ({
+                                        mr: -1,
+                                        transition: '0.2s',
+                                        transform: openCategory === category ? 'rotate(-180deg)' : 'rotate(0)',
+                                        color: openCategory === category ? theme.palette.common.black : theme.palette.grey[500]
+                                    })}
                                 />
                             </ListItemButton>
                             {openCategory === category &&
                                 powers.filter((power: Power) => power.skill === category).map((item) => (
                                     <ListItemButton
                                         key={item.name}
-                                        sx={{ py: 1, minHeight: 32}}
+                                        sx={theme => ({
+                                            borderBottom: `1px solid ${theme.palette.grey[400] }`,
+                                        })}
                                         onClick={() => setSelected(item)}
                                     >
                                         <ListItemText

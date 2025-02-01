@@ -2,6 +2,67 @@ type CostMaps = {
     [key: string]: any
 }
 
+const loreMap = {
+    duration: {
+        "no_duration": 0,
+            "one_minute": 1,
+            "one_hour": 3,
+            "eight_hours": 4,
+            "twenty_four_hours": 6,
+    },
+    areaOfEffect: {
+        target: {
+            1: 0,
+        },
+    },
+    range: {
+        touch: 0,
+    },
+    apCost: {
+        5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+    },
+    damage: {
+        extra_weapon: {
+            low: 2,
+                medium: 3,
+                high: 4,
+        },
+    },
+    healing: {
+        healing: {
+            low: 0,
+                medium: 1,
+                high: 2,
+                superior: 5,
+        },
+        save_vs_condition: 2,
+            temp_hp: {
+            low: 1,
+                high: 2,
+        }
+    },
+    condition: {},
+    combat_effect: {},
+    movement: {},
+    sense: {},
+    benefit: {
+        plus_ten_to_skill_group: 1,
+            plus_ten_to_save: 1,
+            plus_twenty_to_save: 2,
+            plus_twenty_to_skill_group: 2,
+            plus_thirty_to_save: 4,
+            plus_thirty_to_skill_group: 4,
+    },
+    terrain: {},
+    warding: {},
+    polymorph: {},
+    miscellaneous: {}
+}
+
 const CostMaps: CostMaps = {
     divination: {
         duration: {
@@ -59,7 +120,7 @@ const CostMaps: CostMaps = {
 
         },
         condition: {},
-        combat_effects: {},
+        combat_effect: {},
         movement: {
             shift_2: 2,
             shift_4: 3,
@@ -162,7 +223,7 @@ const CostMaps: CostMaps = {
             slow: 3,
             restrain: 2
         },
-        combat_effects: {
+        combat_effect: {
             trip: 1,
             disarm: 1,
             push: 1,
@@ -291,7 +352,7 @@ const CostMaps: CostMaps = {
             restrain: 2,
             panic: 3
         },
-        combat_effects: {
+        combat_effect: {
             trip: 1,
             disarm: 1,
             push: 1,
@@ -428,7 +489,7 @@ const CostMaps: CostMaps = {
             restrain: 2,
             panic: 2
         },
-        combat_effects: {
+        combat_effect: {
             trip: 1,
             disarm: 1,
             push: 1,
@@ -535,7 +596,7 @@ const CostMaps: CostMaps = {
             slow: 2,
             restrain: 2,
         },
-        combat_effects: {
+        combat_effect: {
             trip: 1,
             disarm: 1,
             push: 1,
@@ -589,8 +650,434 @@ const CostMaps: CostMaps = {
             invisibility: 5,
             telekinesis: 1
         },
-    }
-
+    },
+    melee: {
+        duration: {
+            "no_duration": 0,
+        },
+        areaOfEffect: {
+            burst: {
+                1: 2,
+                2: 4,
+            },
+            aura: {
+                1: 2,
+                2: 4,
+                3: 6,
+            },
+            target: {
+                1: 0,
+                2: 1,
+                3: 2,
+                4: 3,
+            },
+        },
+        range: {},
+        apCost: {
+            5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+        },
+        damage: {
+            extra_weapon: {
+                low: 2,
+                medium: 3,
+                high: 4,
+            },
+        },
+        healing: {},
+        condition: {
+            stagger: 1,
+            slow: 3,
+            stun: 5,
+            weaken: 3,
+            blind: 3,
+            restrain: 2,
+        },
+        combat_effect: {
+            trip: 1,
+            disarm: 1,
+            push: 1,
+            pull: 2,
+            slide: 2,
+            sunder: 1,
+            grapple: 2,
+            standard_attack: 0,
+        },
+        movement: {
+            climb_add_to_move: 1,
+            swim_add_to_move: 1,
+            movement_equals_move: 1,
+            movement_equals_move_plus_2: 2,
+            movement_equals_move_plus_4: 3,
+            shift_2: 1,
+            shift_4: 2,
+            shift_6: 3,
+        },
+        sense: {},
+        benefit: {
+            reroll: 5,
+            success_shift: 8,
+            extra_defense_action: 4,
+        },
+        terrain: {
+            difficult_terrain: 2,
+        },
+        warding: {
+        },
+        polymorph: {},
+        miscellaneous: {},
+    },
+    thrown: {
+        duration: {
+            "no_duration": 0,
+        },
+        areaOfEffect: {
+            burst: {
+                1: 2,
+            },
+            aura: {
+                1: 2,
+            },
+            blast: {
+                3: 2,
+            },
+            target: {
+                1: 0,
+                2: 1,
+                3: 2,
+                4: 3,
+            },
+        },
+        range: {},
+        apCost: {
+            5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+        },
+        damage: {
+            extra_weapon: {
+                low: 2,
+                medium: 3,
+                high: 4,
+            },
+        },
+        healing: {},
+        condition: {
+            stagger: 1,
+            slow: 3,
+            stun: 5,
+            weaken: 3,
+            blind: 3,
+            restrain: 3,
+        },
+        combat_effect: {
+            trip: 1,
+            disarm: 1,
+            push: 1,
+            pull: 2,
+            slide: 2,
+            sunder: 1,
+            grapple: 2,
+            standard_attack: 0,
+        },
+        movement: {
+            movement_equals_move: 1,
+            movement_equals_move_plus_2: 2,
+            movement_equals_move_plus_4: 3,
+            shift_2: 1,
+            shift_4: 2,
+            shift_6: 3,
+        },
+        sense: {},
+        benefit: {
+            reroll: 5,
+            success_shift: 9,
+            extra_defense_action: 4,
+        },
+        terrain: {
+            difficult_terrain: 2,
+        },
+        warding: {},
+        polymorph: {},
+        miscellaneous: {},
+    },
+    projectile: {
+        duration: {
+            "no_duration": 0,
+        },
+        areaOfEffect: {
+            burst: {
+                1: 2,
+            },
+            aura: {
+                1: 2,
+            },
+            blast: {
+                3: 2,
+                5: 4,
+            },
+            target: {
+                1: 0,
+                2: 1,
+                3: 2,
+                4: 3,
+            },
+            trap: 2,
+        },
+        range: {},
+        apCost: {
+            5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+        },
+        damage: {
+            extra_weapon: {
+                low: 2,
+                medium: 3,
+                high: 4,
+            },
+        },
+        healing: {},
+        condition: {
+            stagger: 1,
+            slow: 3,
+            stun: 5,
+            weaken: 3,
+            blind: 3,
+            restrain: 3,
+        },
+        combat_effect: {
+            trip: 1,
+            disarm: 1,
+            push: 1,
+            pull: 2,
+            slide: 2,
+            sunder: 1,
+            grapple: 2,
+            standard_attack: 0,
+        },
+        movement: {
+            movement_equals_move: 1,
+            movement_equals_move_plus_2: 2,
+            movement_equals_move_plus_4: 3,
+            shift_2: 1,
+            shift_4: 2,
+            shift_6: 3,
+        },
+        sense: {},
+        benefit: {
+            reroll: 5,
+            success_shift: 9,
+            extra_defense_action: 4,
+        },
+        terrain: {
+            difficult_terrain: 2,
+        },
+        warding: {},
+        polymorph: {},
+        miscellaneous: {},
+    },
+    athletics: {
+        duration: {
+            "no_duration": 0,
+        },
+        areaOfEffect: {
+            target: {
+                1: 0,
+            },
+        },
+        range: {
+            touch: 0,
+        },
+        apCost: {
+            5: -2,
+            3: -1,
+            2: 0,
+            1: 4,
+            0: 5
+        },
+        damage: {},
+        healing: {},
+        condition: {},
+        combat_effect: {},
+        movement: {
+            climb_add_to_move: 1,
+            swim_add_to_move: 1,
+            fly: 7,
+            water_walking: 4,
+            movement_equals_move: 0,
+            movement_equals_move_plus_2: 1,
+            movement_equals_move_plus_4: 2,
+            shift_2: 1,
+            shift_4: 2,
+            shift_6: 3,
+        },
+        sense: {},
+        benefit: {
+            reroll: 5,
+            success_shift: 8,
+            extra_defense_action: 4,
+        },
+        terrain: {},
+        warding: {},
+        polymorph: {},
+        miscellaneous: {},
+    },
+    interaction: {
+        duration: {
+            "no_duration": 0,
+            "one_minute": 1,
+            "one_hour": 3,
+            "eight_hours": 4,
+            "twenty_four_hours": 6,
+        },
+        areaOfEffect: {
+            burst: {
+                1: 2,
+                2: 4,
+                3: 6,
+            },
+            aura: {
+                1: 2,
+                2: 4,
+                3: 6,
+            },
+            blast: {
+                3: 1,
+                5: 3,
+                7: 5,
+            },
+            target: {
+                1: 0,
+                2: 1,
+                3: 2,
+                4: 3,
+            },
+        },
+        range: {
+            touch: -1,
+            ten: 0,
+            twenty: 1,
+            forty: 2
+        },
+        apCost: {
+            5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+        },
+        damage: {},
+        healing: {
+            save_vs_condition: 4,
+            temp_hp: {
+                low: 2,
+                high: 4,
+            }
+        },
+        condition: {
+            charm: 2,
+            dominate: 6,
+            stagger: 1,
+            slow: 4,
+            stun: 5,
+            panic: 3,
+        },
+        combat_effect: {
+            trip: 2,
+            disarm: 2,
+            push: 1,
+            pull: 2,
+            slide: 2,
+        },
+        movement: {
+            movement_equals_move: 2,
+            movement_equals_move_plus_2: 3,
+            movement_equals_move_plus_4: 4,
+            shift_2: 2,
+            shift_4: 3,
+            shift_6: 4,
+        },
+        sense: {},
+        benefit: {
+            plus_ten_to_skill_group: 1,
+            plus_ten_to_save: 1,
+            plus_twenty_to_save: 2,
+            plus_twenty_to_skill_group: 2,
+            plus_thirty_to_save: 4,
+            plus_thirty_to_skill_group: 4,
+            reroll: 5,
+            success_shift: 8,
+        },
+        terrain: {},
+        warding: {},
+        polymorph: {},
+        miscellaneous: {},
+    },
+    lore_nature: loreMap,
+    lore_arcana: loreMap,
+    lore_technology: loreMap,
+    lore_social: loreMap,
+    observation: {
+        duration: {
+            "no_duration": 0,
+            "one_minute": 1,
+            "one_hour": 3,
+            "eight_hours": 4,
+            "twenty_four_hours": 6,
+        },
+        areaOfEffect: {
+            target: {
+                1: 0,
+            },
+        },
+        range: {
+            touch: 0,
+        },
+        apCost: {
+            5: -1,
+            3: 0,
+            2: 2,
+            1: 4,
+            0: 5
+        },
+        damage: {},
+        healing: {},
+        condition: {},
+        combat_effect: {},
+        movement: {},
+        sense: {
+            power_sight: 3,
+            lifesense: 3,
+            danger: 2,
+            low_light_vision: 2,
+            darkvision: 3,
+            blind_sight: 4,
+            true_seeing: 5,
+        },
+        benefit: {
+            plus_ten_to_skill_group: 2,
+            plus_twenty_to_skill_group: 3,
+            plus_thirty_to_skill_group: 5,
+            plus_ten_to_save: 2,
+            plus_twenty_to_save: 3,
+            plus_thirty_to_save: 5,
+            reroll: 5,
+            success_shift: 9,
+            extra_defense_action: 4,
+        },
+        terrain: {},
+        warding: {},
+        polymorph: {},
+        miscellaneous: {},
+    },
 }
 
 export default CostMaps

@@ -43,7 +43,6 @@ const useCalculateCost = (mergedData: any, calculator?: CostCalculator): Costs =
     const advantages = useAppSelector(state => byIds(state, advantageIds))
 
     useEffect(() => {
-        console.log({data})
         if (!data || !calculator) {
             return;
         }

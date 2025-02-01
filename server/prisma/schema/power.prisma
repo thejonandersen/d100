@@ -189,6 +189,7 @@ enum PowerRange {
   ten
   twenty
   fourty
+  weapon_range
 }
 
 enum PowerSkill {
@@ -196,12 +197,16 @@ enum PowerSkill {
   energy
   life
   mind
+  planar
   melee
   thrown
   projectile
   athletics
   interaction
-  lore
+  lore_arcana
+  lore_nature
+  lore_social
+  lore_technology
   observation
 }
 
