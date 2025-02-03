@@ -18,7 +18,7 @@ import {costCalculator} from './costCalculator'
 import {CostDisplay} from '../../components/cost/CostDisplay'
 import preSubmitProcess from './preSubmitProcess'
 import WithProfiling from '../../components/WithProfiling'
-import {getRequirement} from './utils'
+import {getRequirement, displayText} from './utils'
 
 export const CreateOrEditPower = () => {
     const {id} = useParams();
@@ -47,6 +47,7 @@ export const CreateOrEditPower = () => {
                                     initialData={initialData}
                                     id="power"
                                     submit={submit}
+                                    displayText={displayText}
                                 />
                             </WithProfiling>) : <>
                                 <Skeleton/>

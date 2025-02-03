@@ -23,7 +23,6 @@ import {Language, load as loadLanguages} from '../../state/language/slice'
 import {Advantage, load as loadAdvantages} from '../../state/advantage/slice'
 import {StatName, StatSchema} from 'd100-libs'
 import z from 'zod';
-
 type RaceModalParams = {
     race: Race | null;
     handleClose: () => void;
@@ -36,8 +35,6 @@ type RaceStat = {
         max: number;
     }
 }
-
-type Stat = z.infer<typeof StatSchema>
 
 type StatName = z.infer<typeof StatName>
 
@@ -54,49 +51,84 @@ const StyledTableCell = styled(TableCell)(({ theme }) => (
         }
 ));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
+type RowProps = {
+    stats: RaceStat[],
+}
 
-const Row: React.FC<{stats: RaceStat[]}> = ({stats}) => {
-    return (<StyledTableRow key={`row_${Math.random()*10}_${Math.random()*10}`}>
+const Row: React.FC<RowProps> = ({stats}) => {
+    return (<TableRow key={`${stats[0].name}_row`} sx={theme => ({
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+        // hide last border
+        '&:last-child td, &:last-child th': {
+            border: 0,
+        }
+    })}>
         {stats.map((stat, index) => {
                 if (index%2 === 0)
                     return (
-                        <>
-                            <StyledTableCell align="center">{stat.name}</StyledTableCell>
-                            <StyledTableCell align="center">{stat.data.min}</StyledTableCell>
-                            <StyledTableCell align="center">{stat.data.max}</StyledTableCell>
-                            <StyledTableCell align="center">|</StyledTableCell>
-                        </>
+                        <React.Fragment key={`${stat.name}_fragment`}>
+                            <StyledTableCell align="center" key={`${stat.name}_name`}>{stat.name}</StyledTableCell>
+                            <StyledTableCell align="center" key={`${stat.name}_min`}>{stat.data.min}</StyledTableCell>
+                            <StyledTableCell align="center" key={`${stat.name}_max`}>{stat.data.max}</StyledTableCell>
+                            <StyledTableCell align="center" key={`${stat.name}_divider`}>|</StyledTableCell>
+                        </React.Fragment>
                     )
 
                 return (
-                    <>
-                        <StyledTableCell align="center">{stat.name}</StyledTableCell>
-                        <StyledTableCell align="center">{stat.data.min}</StyledTableCell>
-                        <StyledTableCell align="center">{stat.data.max}</StyledTableCell>
-                    </>
+                    <React.Fragment key={`${stat.name}_fragment`}>
+                        <StyledTableCell align="center" key={`${stat.name}_name`}>{stat.name}</StyledTableCell>
+                        <StyledTableCell align="center" key={`${stat.name}_min`}>{stat.data.min}</StyledTableCell>
+                        <StyledTableCell align="center" key={`${stat.name}_max`}>{stat.data.max}</StyledTableCell>
+                    </React.Fragment>
                 )
             }
         )}
-    </StyledTableRow>)
+    </TableRow>)
 }
 
 export const RaceModal: React.FC<RaceModalParams> = ({ race, handleClose}) => {
     const [shouldRender, setShouldRender] = React.useState(false);
     const [startingLanguages, setStartingLanguages] = React.useState<string>();
     const [startingAdvantages, setStartingAdvantages] = React.useState<string>();
+    const [statRows, setStatRows] = React.useState<RaceStat[][]>([]);
     const advantages: Advantage[] = useAppSelector(state => state.advantage.advantages);
     const languages: Language[] = useAppSelector(state => state.language.languages);
     const dispatch = useAppDispatch();
-    let rowData: RaceStat[] = [];
+
+    useEffect(() => {
+        if (!race || !race.stats)
+            return;
+
+        const {stats} = race;
+        let rowData: RaceStat[] = []
+        const rowsData = Object.keys(stats || {}).map((key, index) => {
+            const stat = stats[key as keyof StatName];
+            if (index%2 === 0 && index !== 6) {
+                rowData = []
+                rowData.push({
+                    name: key,
+                    data: stat,
+                })
+                return null
+            } else if (index !== 6) {
+                rowData.push({
+                    name: key,
+                    data: stat,
+                })
+                return rowData;
+            } else {
+                rowData = []
+                rowData.push({
+                    name: key,
+                    data: stat,
+                })
+                return rowData;
+            }
+        }).filter((r) => r !== null);
+        setStatRows(rowsData);
+    }, [race]);
 
     useEffect(() => {
         if (!advantages.length && race) {
@@ -189,33 +221,9 @@ export const RaceModal: React.FC<RaceModalParams> = ({ race, handleClose}) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {race?.stats !== null ? Object.keys(race?.stats || {}).map((key, index) => {
-                                        const stat = race?.stats ? race?.stats[key as keyof StatName] : {} as Stat;
-                                        if (index%2 === 0 && index !== 6) {
-                                            rowData = []
-                                            rowData.push({
-                                                name: key,
-                                                data: stat,
-                                            })
-                                            return null
-                                        } else if (index !== 6) {
-                                            rowData.push({
-                                                name: key,
-                                                data: stat,
-                                            })
-                                            return (<Row stats={rowData} />)
-                                        } else {
-                                            rowData = []
-                                            rowData.push({
-                                                name: key,
-                                                data: stat,
-                                            })
-                                            return (<Row stats={rowData} />)
-                                        }
-
-
-
-                                    }): null}
+                                    {statRows && statRows.map(row => (
+                                        <Row stats={row} key={row[0].name} />
+                                    ))}
                                 </TableBody>
                             </Table>
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold', pt: 2 }}>Cost: {race?.cost}</Typography>

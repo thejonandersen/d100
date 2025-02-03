@@ -19,10 +19,6 @@ import {categoryIcons, specialReqsToString, reqToString} from './utils'
 import IconResolver from '../../components/IconResolver'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import {useNavigate} from 'react-router'
-import {load as loadAdvantages, all as allAdvantages} from '../../state/advantage/slice'
-import {useAppSelector, useAppDispatch} from '../../state/hooks'
-import type {Advantage} from '../../state/advantage/slice'
 import useCollectionPage from '../../hooks/useCollectionPage'
 
 

@@ -13,7 +13,7 @@ type Condition = {
 }
 
 export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
-    schema, name, props, sx, gridSize, formId, shouldLabelObjects
+    schema, name, props, sx, gridSize, formId, shouldLabelObjects, displayText
 }) => {
     const conditions: Condition[] = props.conditions;
     const [conditionMet, setConditionMet] = useState<boolean>(false);
@@ -85,6 +85,7 @@ export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
         formId={formId}
         props={props}
         shouldLabelObjects={shouldLabelObjects}
+        displayText={displayText}
     />
         : null);
 };

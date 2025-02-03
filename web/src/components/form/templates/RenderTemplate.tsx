@@ -14,7 +14,8 @@ export const RenderTemplate: React.FC<
     sx,
     gridSize,
     formId,
-    shouldLabelObjects
+    shouldLabelObjects,
+    displayText,
 }) => {
     if (name === "id") {
         return null;
@@ -36,20 +37,20 @@ export const RenderTemplate: React.FC<
                 return <Templates.ConditionalTemplate schema={resolvedSchema}
                                                       name={name} props={{...props, ...descriptionProps}}
                                                       gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-                                                      formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+                                                      formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
             }
 
             if (template === "AsyncSelect" || props && props.subTemplate === "AsyncSelectTemplate") {
                 return <Templates.AsyncSelectionTemplate schema={resolvedSchema as z.ZodString}
                                                          name={name} props={{...props, ...descriptionProps}}
                                                          gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-                                                         formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+                                                         formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
             }
 
             if (template === "JSON" || props && props.subTemplate === "AsyncSelectTemplate") {
                 return <Templates.JSONStringTemplate schema={schema} name={name} props={{...props, ...descriptionProps}}
                                                      gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-                                                     formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+                                                     formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
             }
         } catch (e: any) {
             console.error(e.message);
@@ -64,32 +65,32 @@ export const RenderTemplate: React.FC<
         return <Templates.StringTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     } else if (resolvedSchema instanceof z.ZodNumber) {
         return <Templates.NumberTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     } else if (resolvedSchema instanceof z.ZodUnion) {
         return <Templates.UnionTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     } else if (resolvedSchema instanceof z.ZodObject) {
         return <Templates.ObjectTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     } else if (resolvedSchema instanceof z.ZodArray) {
         return <Templates.ArrayTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     } else if (resolvedSchema instanceof z.ZodBoolean) {
         return <Templates.BooleanTemplate
             schema={resolvedSchema} name={name} props={{...props, ...descriptionProps}}
             gridWrap={gridWrap} sx={sx} gridSize={gridSize}
-            formId={formId} shouldLabelObjects={shouldLabelObjects}/>;
+            formId={formId} shouldLabelObjects={shouldLabelObjects} displayText={displayText} />;
     }
 
     return null;

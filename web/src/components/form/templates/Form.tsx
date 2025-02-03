@@ -14,7 +14,7 @@ const isObjectSchema = (schema: z.ZodTypeAny): schema is z.ZodObject<any> => {
 };
 
 export const Form: React.FC<FormRootProps> = ({
-    schema, initialData, labelObjects = false, columns = 1, id, submitData, submit
+    schema, initialData, labelObjects = false, columns = 1, id, submitData, submit, displayText
 }) => {
     const [registered, setRegistered] = useState<boolean>(false)
     const [isValid, setIsValid] = useState<boolean>(false);
@@ -47,6 +47,7 @@ export const Form: React.FC<FormRootProps> = ({
                         gridSize={12 / columns}
                         formId={id}
                         shouldLabelObjects={labelObjects}
+                        displayText={displayText}
                     />);
                 })}
             </Grid2>

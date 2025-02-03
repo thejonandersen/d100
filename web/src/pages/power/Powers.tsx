@@ -17,6 +17,7 @@ import useCollectionPage from '../../hooks/useCollectionPage'
 import z from 'zod'
 import {categoryIcons} from './utils'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
+import PowerModal from './Modal'
 
 type PowerCategory = z.infer<typeof PowerSkillSchema>
 
@@ -38,6 +39,10 @@ export const Powers = () => {
         } else {
             setOpenCategory(cat)
         }
+    }
+
+    const handleClose = () => {
+        setSelected(null);
     }
 
     useEffect(() => {
@@ -130,6 +135,7 @@ export const Powers = () => {
                     ))}
                 </List>
             </Paper>
+            <PowerModal handleClose={handleClose} power={selected} />
         </Container>
     )
 }

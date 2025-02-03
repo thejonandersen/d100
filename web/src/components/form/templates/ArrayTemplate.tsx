@@ -52,7 +52,7 @@ const getLabel = (name: string): string => {
 }
 
 // Array Item
-const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, index, remove}) => {
+const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, index, remove, displayText}) => {
     const resolvedSchema = resolveSchema(schema);
     const itemName = name ? name.split('.').pop() : name;
     const displayName: string = name ? getLabel(itemName as string) : "";
@@ -82,6 +82,7 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, in
                     name={itemName}
                     gridSize={gridSize}
                     formId={formId}
+                    displayText={displayText}
                 />
             </Box>
             <Box
@@ -99,7 +100,7 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, in
 };
 
 // Array Template
-export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects}) => {
+export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects, displayText}) => {
     const innerSchema = resolveSchema(getInnerSchema(schema)) as any;
     const path = `${formId}.${name}`;
     const values = useAppSelector((state) => getValue(state, path));
@@ -128,6 +129,7 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
                 gridSize={gridSize}
                 formId={formId}
                 shouldLabelObjects={shouldLabelObjects}
+                displayText={displayText}
             />);
         } catch (e) {
             console.error(e);
@@ -145,6 +147,7 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
                 key={`${name}[${index}]`}
                 index={index}
                 remove={handleRemove}
+                displayText={displayText}
             />);
         })}
         <Button

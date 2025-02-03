@@ -15,6 +15,9 @@ export type FormRootProps = {
         id?: string;
     }
     submit?: (data: any) => void;
+    displayText?: {
+        [key: string]: string;
+    }
 };
 
 type BaseTemplateProps = {
@@ -25,6 +28,9 @@ type BaseTemplateProps = {
     gridSize: number;
     formId: string;
     shouldLabelObjects?: boolean;
+    displayText?: {
+        [key: string]: string;
+    }
 }
 
 export type StringTemplateProps = {

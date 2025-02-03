@@ -2,7 +2,6 @@
 
 ### Frontend TODOs:
 * Further restrict power effect choices based on selections to reflect rules.
-* Power Modal
 * Character Template Modal
 * Character
     * List page (mine)

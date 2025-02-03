@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import {capitalize, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {UnionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
@@ -15,12 +15,28 @@ type Condition = {
     }
 }
 
-export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, gridSize, formId, props, gridWrap = true}) => {
+export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, gridSize, formId, props, displayText, gridWrap = true}) => {
     const [values, setValues] = useState<any[]>(props.key ? [] : schema.options.map((option: any) => option.value).sort());
     let allowMultiple: boolean = false;
     const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
     const {conditions} = props;
     const conditionValue: any = useAppSelector((state) => conditions?.every((condition: Condition) => condition.scope === 'parent') ? getValue(state, `${formId}.${name?.split('.').slice(0,1)}`) : state.form.forms[formId]);
+
+    const getOptionText = useCallback((value: any) => {
+        if (typeof value !== 'string') {
+            return value;
+        }
+
+        if (!displayText) {
+            return capitalize(value);
+        }
+
+        console.log(displayText, value, displayText[value]);
+
+        return displayText[value] ? capitalize(displayText[value]) : capitalize(value);
+
+
+    }, [displayText])
 
     useEffect(() => {
         if (conditions?.length) {
@@ -52,7 +68,6 @@ export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, g
         }
     }, [conditionValue, conditions]);
 
-
     return (<GridWrap gridWrap={gridWrap} gridSize={gridSize}>
         <StyleWrap sx={sx}>
             <FormControl fullWidth>
@@ -67,7 +82,8 @@ export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, g
                     variant="outlined"
                 >
                     {values && values.map((value: any) => (value &&
-                        <MenuItem key={value} value={value}>{typeof value === 'string' ? value.replace("_", " "): value}</MenuItem>))}
+                        <MenuItem key={value} value={value}>{getOptionText(value)}</MenuItem>
+                    ))}
                 </Select>
             </FormControl>
         </StyleWrap>

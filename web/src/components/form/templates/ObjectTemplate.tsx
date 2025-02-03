@@ -5,7 +5,7 @@ import {ObjectTemplateProps} from "./types";
 import {GridWrap, LabeledObject} from './Wrappers'
 
 // Object Template
-export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects, props}) => {
+export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects, props, displayText}) => {
     const displayName: string = name ? name.split(".").pop() as string : "";
     let label: string = props?.label || displayName;
     let shouldLabel: boolean | undefined = shouldLabelObjects || props?.shouldLabel;
@@ -23,6 +23,7 @@ export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, gri
                 gridSize={gridSize}
                 formId={formId}
                 shouldLabelObjects={shouldLabelObjects}
+                displayText={displayText}
             />))}
         </LabeledObject>
     </GridWrap>);
