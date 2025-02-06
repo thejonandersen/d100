@@ -1,7 +1,6 @@
 # d100
 
 ### Frontend TODOs:
-* Further restrict power effect choices based on selections to reflect rules.
 * Character Template Modal
 * Character
     * List page (mine)

@@ -4,7 +4,7 @@ import {ConditionalTemplateProps} from "./types";
 import {updateFormData} from '../../../state/form/slice'
 import {useAppDispatch} from '../../../state/hooks'
 import {cloneDeep} from 'lodash';
-import {Conditions, RegisterConditionParams} from '../useFormConditions'
+import {RegisterConditionParams} from '../useFormConditions'
 import {FormContext} from './Form'
 
 export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
@@ -43,6 +43,7 @@ export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
             if (!condition.equals) {
                 return true;
             }
+
             return condition.conditionMet
         });
 

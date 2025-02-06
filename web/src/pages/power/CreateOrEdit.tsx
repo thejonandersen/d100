@@ -1,13 +1,5 @@
 import React from "react";
-import {
-    Alert, Box,
-    Card,
-    CardHeader,
-    Container,
-    Grid2, InputBase,
-    Skeleton,
-    Zoom
-} from "@mui/material";
+import {Alert, Box, Card, CardHeader, Container, Grid2, InputBase, Skeleton, Zoom} from "@mui/material";
 
 import {CreatePowerSchema} from "d100-libs";
 import {Form} from "../../components/form";
@@ -17,41 +9,30 @@ import {useCreateOrEdit} from "../../hooks/useCreateOrEdit";
 import {costCalculator} from './costCalculator'
 import {CostDisplay} from '../../components/cost/CostDisplay'
 import preSubmitProcess from './preSubmitProcess'
-import WithProfiling from '../../components/WithProfiling'
-import {getRequirement, displayText} from './utils'
+import {displayText, getRequirement} from './utils'
 
 export const CreateOrEditPower = () => {
     const {id} = useParams();
     const resolvedSchema: any = resolveSchema(CreatePowerSchema);
     const {initialData, shouldRender, cost, itemizedCost, submit, message, severity} = useCreateOrEdit({
-        id,
-        schema: resolvedSchema,
-        key: 'power',
-        costCalculator,
-        preSubmitProcess,
+        id, schema: resolvedSchema, key: 'power', costCalculator, preSubmitProcess
     });
 
-    return (
-        <Container maxWidth="md">
+    return (<Container maxWidth="md">
             <Zoom in={!!message}>
                 <Alert severity={severity} sx={{mt: 5}}>{message}</Alert>
             </Zoom>
-            {!message && (
-                <Grid2 container spacing={3}>
+            {!message && (<Grid2 container spacing={3}>
                     <Grid2 size={9}>
                         <Card className={"Card-Base"}>
                             <CardHeader title={`${initialData ? "Edit" : "Create New"} Power`}></CardHeader>
-                            {shouldRender ? (
-                                <WithProfiling id={'power'}>
-                                <Form
+                            {shouldRender ? (<Form
                                     schema={resolvedSchema}
                                     initialData={initialData}
                                     id="power"
                                     submit={submit}
                                     displayText={displayText}
-                                />
-                                </WithProfiling>
-                            ) : <>
+                                />) : <>
                                 <Skeleton/>
                                 <Skeleton/>
                                 <Skeleton/>
@@ -62,7 +43,7 @@ export const CreateOrEditPower = () => {
                         </Card>
                     </Grid2>
                     <Grid2 size={3}>
-                        <CostDisplay cost={cost} title="PP/CP Cost" itemization={itemizedCost} />
+                        <CostDisplay cost={cost} title="PP/CP Cost" itemization={itemizedCost}/>
                         <Card sx={{mt: 2}}>
                             <CardHeader title="Min Skill Score"/>
                             <Box width="100%" sx={{flexDirection: "row", display: "flex", alignItems: 'center'}}>
@@ -74,8 +55,6 @@ export const CreateOrEditPower = () => {
                             </Box>
                         </Card>
                     </Grid2>
-                </Grid2>
-            )}
-        </Container>
-    );
+                </Grid2>)}
+        </Container>);
 };

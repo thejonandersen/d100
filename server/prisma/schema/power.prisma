@@ -27,7 +27,7 @@ type PowerEffect {
   warding           PowerWarding?
   polymorph         PowerPolymorph?
   miscellaneous     PowerMiscellaneous?
-  damageType        DamageElement?
+  damageType        DamageElement[]
 }
 
 enum PowerMiscellaneous {
@@ -54,6 +54,7 @@ enum PowerWarding {
   fire
   force
   necrotic
+  poison
   psychic
   radiant
 }
@@ -226,7 +227,6 @@ enum PowerSave {
 }
 
 enum DamageElement {
-  any
   acid
   cold
   electrical

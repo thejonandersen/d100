@@ -76,8 +76,9 @@ const useFormConditions = (formId: string) => {
             if (equals) {
                 if (Array.isArray(equals)) {
                     conditionMet = equals.includes(value as string);
+                } else {
+                    conditionMet = value === equals;
                 }
-                conditionMet = value === equals;
             } else if (not) {
                 conditionMet = value !== not;
             }
