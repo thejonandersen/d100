@@ -1,20 +1,25 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {capitalize, CircularProgress, FormControl, Grid2, InputLabel, MenuItem, Select} from "@mui/material";
 import {AsyncSelectionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
 import {StyleWrap} from './Wrappers'
 import {useAppDispatch, useAppSelector} from '../../../state/hooks'
 import {allSlices, Slices} from '../../../state/slices';
+import {FormContext} from './Form'
+import {get} from 'lodash'
 
 export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
-    name, props, schema, gridSize, sx, formId
+    name, props, schema, sx, formId
 }) => {
-    const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
+    const {gridSize, initialData} = useContext(FormContext);
+    const {handleChange, displayName} = useTemplateData({formId, name});
     const [open, setOpen] = useState<boolean>(false);
     const {all, load} = allSlices[props.collection as keyof Slices]
     const options: any[] = useAppSelector(all);
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
+    const defaultValue = get(initialData, name as string);
+
     // @ts-ignore
     const stateData: any = useAppSelector((state) => state[props.endpoint]);
     let multiple: boolean = false;

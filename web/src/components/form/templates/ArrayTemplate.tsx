@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {z} from "zod";
-import {Box, Button, capitalize, Collapse, IconButton, IconButtonProps, InputLabel, BoxProps} from "@mui/material";
+import {Box, Button, capitalize, Collapse, IconButton, IconButtonProps, InputLabel} from "@mui/material";
 import {RenderTemplate} from "./RenderTemplate";
 import {resolveSchema} from "../utils";
 import {ArrayItemProps, ArrayTemplateProps} from "./types";
@@ -52,7 +52,7 @@ const getLabel = (name: string): string => {
 }
 
 // Array Item
-const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, index, remove, displayText}) => {
+const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, formId, index, remove}) => {
     const resolvedSchema = resolveSchema(schema);
     const itemName = name ? name.split('.').pop() : name;
     const displayName: string = name ? getLabel(itemName as string) : "";
@@ -80,9 +80,7 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, in
                 <RenderTemplate
                     schema={resolvedSchema}
                     name={itemName}
-                    gridSize={gridSize}
                     formId={formId}
-                    displayText={displayText}
                 />
             </Box>
             <Box
@@ -100,13 +98,13 @@ const ArrayItem: React.FC<ArrayItemProps> = ({schema, name, gridSize, formId, in
 };
 
 // Array Template
-export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects, displayText}) => {
+export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name,  formId}) => {
     const innerSchema = resolveSchema(getInnerSchema(schema)) as any;
     const path = `${formId}.${name}`;
     const values = useAppSelector((state) => getValue(state, path));
     const dispatch = useAppDispatch();
     const displayName: string = name ? singularize(name.split(".").pop() as string) : "";
-    const handleAdd = (e: any) => {
+    const handleAdd = (_: any) => {
         if (values?.length) {
             dispatch(updateFormData({id: formId, path: `${path}[${[values.length]}]`, data: {}}));
         } else {
@@ -126,10 +124,7 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
             if (template) return (<RenderTemplate
                 schema={innerSchema}
                 name={name}
-                gridSize={gridSize}
                 formId={formId}
-                shouldLabelObjects={shouldLabelObjects}
-                displayText={displayText}
             />);
         } catch (e) {
             console.error(e);
@@ -141,13 +136,10 @@ export const ArrayTemplate: React.FC<ArrayTemplateProps> = ({schema, name, gridS
             return (<ArrayItem
                 schema={innerSchema}
                 name={`${name}[${index}]`}
-                gridSize={gridSize}
                 formId={formId}
-                shouldLabelObjects={shouldLabelObjects}
                 key={`${name}[${index}]`}
                 index={index}
                 remove={handleRemove}
-                displayText={displayText}
             />);
         })}
         <Button

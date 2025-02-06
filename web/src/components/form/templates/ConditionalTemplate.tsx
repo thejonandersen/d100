@@ -1,77 +1,64 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {RenderTemplate} from "./RenderTemplate";
 import {ConditionalTemplateProps} from "./types";
-import {getValue, updateFormData} from '../../../state/form/slice'
-import {useAppDispatch, useAppSelector} from '../../../state/hooks'
-import {isEqual, get, cloneDeep} from 'lodash';
-
-type Condition = {
-    key: string;
-    equals?: any | any[];
-    not?: any | any[];
-    scope?: string;
-}
+import {updateFormData} from '../../../state/form/slice'
+import {useAppDispatch} from '../../../state/hooks'
+import {cloneDeep} from 'lodash';
+import {Conditions, RegisterConditionParams} from '../useFormConditions'
+import {FormContext} from './Form'
 
 export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
-    schema, name, props, sx, gridSize, formId, shouldLabelObjects, displayText
+    name, formId, sx, schema, props
 }) => {
-    const conditions: Condition[] = props.conditions;
+    const {registerConditions, conditions} = useContext(FormContext);
+    const [ids, setIds] = useState<string[]>();
     const [conditionMet, setConditionMet] = useState<boolean>(false);
     const [rendered, setRendered] = useState<boolean>(false);
-    const [cached, setCached] = useState<any>();
+
     const path = `${formId}.${name}`;
-    const parent = `${formId}.${name?.split('.').slice(0,1)}`
-    const value = useAppSelector((state) => getValue(state, path));
-    const formData: any = useAppSelector((state) =>
-        conditions?.length === 1 && conditions[0]?.scope === 'parent' ? getValue(state, parent) : state.form.forms[formId]);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (!conditions || !formData)
-            return;
+        if (props?.conditions) {
+            const parent = `${name?.split('.').slice(0,1)}`
+            const fieldId = name?.replaceAll('.', '').replaceAll('[', '').replaceAll(']','') as string;
+            const ids = registerConditions(props.conditions.map((condition: RegisterConditionParams, index: number) => ({
+                ...condition,
+                parent,
+                id: fieldId + index,
+            })));
 
-        if (!isEqual(cached, formData)) {
-            setCached(formData);
+            setIds(ids);
         }
-
-        const metAll = conditions.every(condition => {
-            const {key, equals, not} = condition;
-            const conditionPath = `${name?.split('.').slice(0,1)}.${key}`;
-            const conditionValue = get(cached, key) || get(cached, conditionPath);
-
-            if (equals) {
-                if (Array.isArray(equals)) {
-                    return equals.includes(conditionValue);
-                }
-
-                return conditionValue === equals;
-            } else if (not) {
-                if (Array.isArray(equals)) {
-                    return !equals.includes(conditionValue);
-                }
-
-                return conditionValue !== equals;
-            }
-
-            return true;
-        })
-
-
-        setConditionMet(metAll);
-    }, [formData, conditions, cached]);
+    }, []);
 
     useEffect(() => {
-        if (conditionMet && !rendered) {
+        if (!conditions || !Object.keys(conditions).length)
+            return;
+        const allMet = ids && ids.every(id => {
+            const condition = conditions[id]
+            if (!condition) {
+                return true;
+            }
+            if (!condition.equals) {
+                return true;
+            }
+            return condition.conditionMet
+        });
+
+        setConditionMet(allMet as boolean);
+
+        if (allMet && !rendered) {
             setRendered(true);
         }
-    }, [conditionMet]);
+    }, [conditions, ids]);
 
     useEffect(() => {
-        if (value && !conditionMet && rendered) {
+        if (!conditionMet && rendered) {
             setRendered(false);
             dispatch(updateFormData({id: formId, path, data: null}));
         }
-    }, [value, conditionMet]);
+    }, [conditionMet]);
 
     const newSchema = cloneDeep(schema);
     // @ts-ignore
@@ -81,11 +68,8 @@ export const ConditionalTemplate: React.FC<ConditionalTemplateProps> = ({
         schema={newSchema}
         name={name}
         sx={sx}
-        gridSize={gridSize}
         formId={formId}
         props={props}
-        shouldLabelObjects={shouldLabelObjects}
-        displayText={displayText}
     />
         : null);
 };

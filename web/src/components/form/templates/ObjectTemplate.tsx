@@ -1,15 +1,17 @@
-import React from "react";
+import React, {useContext} from "react";
 import {capitalize} from "@mui/material";
 import {RenderTemplate} from "./RenderTemplate";
 import {ObjectTemplateProps} from "./types";
-import {GridWrap, LabeledObject} from './Wrappers'
+import {GridWrap, LabeledObject} from './Wrappers';
+import {FormContext} from './Form'
 
 // Object Template
-export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, gridSize, formId, shouldLabelObjects, props, displayText}) => {
-    const displayName: string = name ? name.split(".").pop() as string : "";
-    let label: string = props?.label || displayName;
-    let shouldLabel: boolean | undefined = shouldLabelObjects || props?.shouldLabel;
+export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, formId, props }) => {
 
+    const displayName: string = name ? name.split(".").pop() as string : "";
+    const {labelObjects, gridSize} = useContext(FormContext)
+    let label: string = props?.label || displayName;
+    let shouldLabel: boolean | undefined = labelObjects || props?.shouldLabel;
     return (<GridWrap gridWrap gridSize={gridSize}>
         <LabeledObject label={capitalize(label)} shouldLabelObjects={shouldLabel} sx={{
             p: 2, border: "1px solid rgba(0,0,0,0.3)", borderRadius: "4px", minWidth: "100%"
@@ -20,10 +22,7 @@ export const ObjectTemplate: React.FC<ObjectTemplateProps> = ({schema, name, gri
                 name={`${name}.${key}`}
                 gridWrap={false}
                 sx={{pb: 2}}
-                gridSize={gridSize}
                 formId={formId}
-                shouldLabelObjects={shouldLabelObjects}
-                displayText={displayText}
             />))}
         </LabeledObject>
     </GridWrap>);

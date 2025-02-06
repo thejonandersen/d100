@@ -1,26 +1,19 @@
-import React, {useEffect, useState, useCallback} from "react";
+import React, {useEffect, useState, useCallback, useContext} from "react";
 import {capitalize, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {UnionTemplateProps} from "./types";
 import useTemplateData from './useTemplateData'
 import {GridWrap, StyleWrap} from './Wrappers'
-import {useAppSelector} from '../../../state/hooks'
-import {isEqual, get} from 'lodash';
-import {getValue} from '../../../state/form/slice'
+import {Condition, Conditions, RegisterConditionParams} from '../useFormConditions'
+import {FormContext} from './Form'
+import {get} from 'lodash'
 
-type Condition = {
-    key: string;
-    scope?: string;
-    options: {
-        [key: string]: string[];
-    }
-}
-
-export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, gridSize, formId, props, displayText, gridWrap = true}) => {
-    const [values, setValues] = useState<any[]>(props.key ? [] : schema.options.map((option: any) => option.value).sort());
-    let allowMultiple: boolean = false;
-    const {defaultValue, handleChange, displayName} = useTemplateData({formId, name});
-    const {conditions} = props;
-    const conditionValue: any = useAppSelector((state) => conditions?.every((condition: Condition) => condition.scope === 'parent') ? getValue(state, `${formId}.${name?.split('.').slice(0,1)}`) : state.form.forms[formId]);
+export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, formId, props, gridWrap = true}) => {
+    const [values, setValues] = useState<any[]>()
+    const [value, setValue] = useState<string|string[]>();
+    const {gridSize, initialData, registerConditions, displayText, conditions} = useContext(FormContext);
+    const [allowMultiple, setAllowMultiple] = useState(false);
+    const [ids, setIds] = useState<string[]>();
+    const {handleChange, displayName} = useTemplateData({formId, name});
 
     const getOptionText = useCallback((value: any) => {
         if (typeof value !== 'string') {
@@ -31,54 +24,70 @@ export const UnionTemplate: React.FC<UnionTemplateProps> = ({schema, name, sx, g
             return capitalize(value);
         }
 
-        console.log(displayText, value, displayText[value]);
-
         return displayText[value] ? capitalize(displayText[value]) : capitalize(value);
 
 
     }, [displayText])
 
+    const changeHandler = (e: any) => {
+        handleChange(e);
+        setValue(e.target.value);
+    }
+
     useEffect(() => {
-        if (conditions?.length) {
-            const reducedOptions = conditions.reduce((pre: any[], condition: Condition) =>{
-                const {key, options} = condition;
-                if (options) {
-                    const value = get(conditionValue, key);
-
-
-                    const option = options[value];
-                    if (option) {
-                        return [
-                            ...pre,
-                            ...option,
-                        ]
-                    }
-                }
-
-                return pre;
-            }, [])
-            if (name === 'effects[0].typeModifierLevel') {
-                console.log({reducedOptions, name})
-                console.groupEnd()
-            }
-
-            if (reducedOptions?.length) {
-                setValues(reducedOptions);
-            }
+        if (props?.multiple) {
+            setAllowMultiple(props.multiple);
         }
-    }, [conditionValue, conditions]);
 
-    return (<GridWrap gridWrap={gridWrap} gridSize={gridSize}>
+        // if we have conditions and they are relevant to the UnionTemplate
+        if (props.conditions && !props.conditions.every((condition: Condition) => !!condition.equals)) {
+            const parent = `${name?.split('.').slice(0,1)}`
+            const fieldId = name?.replaceAll('.', '').replaceAll('[', '').replaceAll(']','') as string;
+            const ids = registerConditions(props.conditions?.map((condition: RegisterConditionParams, index: number) => ({
+                ...condition,
+                parent,
+                id: fieldId + index,
+            })));
+
+            setIds(ids);
+        } else {
+            setValues(schema.options.map((option: any) => option.value).sort());
+        }
+
+        const value = get(initialData, name as string);
+
+        setValue(value ? value : props?.multiple ? [] : '');
+    }, []);
+
+    useEffect(() => {
+        if (!ids || !conditions)
+            return;
+
+        const found = ids.reduce((pre: string[], cur: string) => {
+            const condition: Condition = conditions[cur];
+            if (condition && condition.optionsMet) {
+                return [...pre, ...condition.optionsMet];
+            }
+
+            return pre;
+        }, [])
+
+        if (found.length) {
+            setValues(found)
+        }
+    }, [conditions, ids]);
+
+    return (values && <GridWrap gridWrap={gridWrap} gridSize={gridSize}>
         <StyleWrap sx={sx}>
             <FormControl fullWidth>
-                <InputLabel id={`${displayName}-label`} shrink={!!defaultValue}>{capitalize(displayName)}</InputLabel>
+                <InputLabel id={`${displayName}-label`} shrink={!!value}>{capitalize(displayName)}</InputLabel>
                 <Select
                     labelId={`${displayName}-label`}
                     id={`${displayName}-select`}
                     label={displayName}
                     multiple={allowMultiple}
-                    onChange={handleChange}
-                    value={defaultValue ? defaultValue : allowMultiple ? [] : ''}
+                    onChange={changeHandler}
+                    value={value}
                     variant="outlined"
                 >
                     {values && values.map((value: any) => (value &&

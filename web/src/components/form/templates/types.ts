@@ -1,6 +1,5 @@
 import {z, ZodTypeAny} from "zod";
 import React from "react";
-import {AxiosInstance} from "axios";
 import {JSONSchema} from "d100-libs";
 
 export type FormRootProps = {
@@ -13,24 +12,20 @@ export type FormRootProps = {
         keys: string[];
         url: string;
         id?: string;
+        onComplete?: (success: boolean, data?: any) => void;
     }
     submit?: (data: any) => void;
     displayText?: {
         [key: string]: string;
-    }
+    };
 };
 
 type BaseTemplateProps = {
     name?: string;
     props?: any;
-    gridWrap?: boolean;
     sx?: any;
-    gridSize: number;
     formId: string;
-    shouldLabelObjects?: boolean;
-    displayText?: {
-        [key: string]: string;
-    }
+    gridWrap?: boolean;
 }
 
 export type StringTemplateProps = {

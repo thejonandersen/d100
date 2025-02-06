@@ -41,7 +41,8 @@ export const CreateOrEditPower = () => {
                     <Grid2 size={9}>
                         <Card className={"Card-Base"}>
                             <CardHeader title={`${initialData ? "Edit" : "Create New"} Power`}></CardHeader>
-                            {shouldRender ? (<WithProfiling id="power_form">
+                            {shouldRender ? (
+                                <WithProfiling id={'power'}>
                                 <Form
                                     schema={resolvedSchema}
                                     initialData={initialData}
@@ -49,7 +50,8 @@ export const CreateOrEditPower = () => {
                                     submit={submit}
                                     displayText={displayText}
                                 />
-                            </WithProfiling>) : <>
+                                </WithProfiling>
+                            ) : <>
                                 <Skeleton/>
                                 <Skeleton/>
                                 <Skeleton/>

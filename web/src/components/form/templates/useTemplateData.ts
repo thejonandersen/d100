@@ -11,12 +11,10 @@ type useTemplateDataParams = {
 type useTemplateDataReturn = {
     displayName: string;
     handleChange: (e: any, _?:any, isNumber?: boolean) => void;
-    defaultValue: any;
 }
 
 const useTemplateData = ({formId, name}: useTemplateDataParams): useTemplateDataReturn => {
     const path = `${formId}.${name}`;
-    const defaultValue = useAppSelector((state) => getValue(state, path));
     const dispatch = useAppDispatch();
     const displayName: string = name ? name.split(".").pop() as string : "";
     const handleChange = (e: any, _?: any, isNumber?: boolean) => {
@@ -27,7 +25,7 @@ const useTemplateData = ({formId, name}: useTemplateDataParams): useTemplateData
         }
     }
 
-    return {displayName, handleChange, defaultValue}
+    return {displayName, handleChange}
 }
 
 export default useTemplateData;
