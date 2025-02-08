@@ -7,7 +7,6 @@
     * create/edit
     * sheet page
 * Rule view/edit
-* Better login ui
 * Electron wrapper
 * Offline mode
 

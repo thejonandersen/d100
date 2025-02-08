@@ -2,8 +2,20 @@ import React from "react";
 import {login, LoginPayload} from "../state/user/slice";
 import {useAppDispatch} from "../state/hooks";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
-import {Button, Card, CardActions, CardHeader, Container, Stack, TextField} from "@mui/material";
+import {
+    Button,
+    Card,
+    CardActions,
+    CardHeader,
+    Container,
+    Stack,
+    TextField,
+    InputAdornment,
+    IconButton,
+    OutlinedInput, FormControl, InputLabel
+} from "@mui/material";
 import "../App.css";
+import IconResolver from '../components/IconResolver'
 
 export const Login: React.FC = () => {
     const {
@@ -18,6 +30,19 @@ export const Login: React.FC = () => {
         console.log({data});
         dispatch(login(data));
     };
+
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
     return (<Container maxWidth="sm">
         <Card className={"Card-Base"}>
             <CardHeader title="Log In"></CardHeader>
@@ -45,14 +70,30 @@ export const Login: React.FC = () => {
                         control={control}
                         rules={{required: "Password is required"}}
                         render={({field}: any) => (
-                            <TextField
-                                {...field}
-                                label="Password"
-                                error={!!errors.email}
-                                helperText={errors.email?.message}
-                                variant="outlined"
-                                fullWidth
-                            />
+                            <FormControl>
+                                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                <OutlinedInput
+                                    {...field}
+                                    label="Password"
+                                    error={!!errors.email}
+                                    helperText={errors.email?.message}
+                                    variant="outlined"
+                                    type={showPassword ? 'text' : 'password'}
+                                    fullWidth
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                onMouseUp={handleMouseUpPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <IconResolver iconName="VisibilityOff" /> : <IconResolver iconName="Visibility" />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
                         )}
                     />
                     <CardActions sx={{flexDirection: "row-reverse"}}>

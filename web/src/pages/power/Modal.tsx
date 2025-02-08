@@ -95,8 +95,12 @@ const PowerModal: React.FC<ModalProps> = ({power, handleClose}) => {
                             type = type === 'combat_effect' ? 'combatEffect' : type;
                             const value: Value = effect[type as keyof typeof effect] as Value;
                             return (
-                                <Typography variant="body2" sx={{ pt: 0.55, pl: index === 0 ? 1 : 0 }}>
-                                    {index > 0 && ', '}{value && displayText[value] ? capitalize(displayText[value]) : capitalize(value)} {type === 'damage' && "Damage"} {capitalize(effect.typeModifierLevel || '')}
+                                <Typography key={value} variant="body2" sx={{ pt: 0.55, pl: index === 0 ? 1 : 0 }}>
+                                    {index > 0 && ', '}
+                                    {value && displayText[value] ?
+                                        capitalize(displayText[value])
+                                        : capitalize(value)} {type === 'damage' && "Damage"} {capitalize(effect.typeModifierLevel || '')}
+                                        {effect.damageType ? `, ${effect.damageType.map(e => capitalize(e)).join(',')}`: null}
                                 </Typography>
                             )
                         })}
