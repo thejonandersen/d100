@@ -3,7 +3,10 @@ import z from "zod";
 import {API} from "../../common/axios";
 import {CreateAdvantageSchema, UpdateAdvantageSchema} from 'd100-libs'
 
-export type Advantage = { id?: string } & z.infer<typeof CreateAdvantageSchema>
+export type Advantage = {
+    id?: string,
+    special: any,
+} & z.infer<typeof CreateAdvantageSchema>
 
 const emptyArray: any[] = [];
 
@@ -50,10 +53,8 @@ const advantagesSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(load.fulfilled, (state, action) => {
-                return {
-                    status: 'idle',
-                    advantages: action.payload
-                }
+                state.status = 'idle';
+                state.advantages = action.payload as unknown as Advantage[];
             })
             .addCase(load.rejected, (state) => {
                 state.status = 'failed';

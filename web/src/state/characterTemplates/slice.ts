@@ -48,10 +48,8 @@ const characterTemplatesSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(load.fulfilled, (state, action) => {
-                return {
-                    status: 'idle',
-                    characterTemplates: action.payload
-                }
+                state.status = 'idle';
+                state.characterTemplates = action.payload as unknown as CharacterTemplate[];
             })
             .addCase(load.rejected, (state) => {
                 state.status = 'failed';

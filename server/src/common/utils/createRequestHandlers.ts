@@ -103,7 +103,7 @@ const createUpdateRequestHandler = (modelName: string) => {
         const {id} = req.params;
         const connection = getConnection(modelName);
 
-        console.log(id);
+        console.log('update', id);
 
         try {
             // @ts-ignore

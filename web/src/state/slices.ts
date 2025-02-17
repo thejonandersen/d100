@@ -8,7 +8,7 @@ export type Slices = {
     advantage: typeof advantage;
     language: typeof language;
     race: typeof race;
-    characterTemplate: typeof characterTemplates;
+    ['character-template']: typeof characterTemplates;
     power: typeof power;
 }
 
@@ -34,7 +34,7 @@ export const allSlices= {
         created: language.created,
         updated: language.updated,
     },
-    characterTemplate: {
+    ['character-template']: {
         load: characterTemplates.load,
         all: characterTemplates.all,
         byId: characterTemplates.byId,

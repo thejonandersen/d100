@@ -46,10 +46,8 @@ const racesSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(load.fulfilled, (state, action) => {
-                return {
-                    status: 'idle',
-                    races: action.payload
-                }
+                state.status = 'idle';
+                state.races = action.payload as unknown as Race[];
             })
             .addCase(load.rejected, (state) => {
                 state.status = 'failed';

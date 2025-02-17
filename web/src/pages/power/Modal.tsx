@@ -18,7 +18,7 @@ import {Power} from '../../state/power/slice'
 import IconButton from '@mui/material/IconButton'
 import IconResolver from '../../components/IconResolver'
 import Typography from '@mui/material/Typography'
-import {displayText} from './utils'
+import {displayText} from '@/common/utils'
 
 type ModalProps = {
     handleClose: () => void;

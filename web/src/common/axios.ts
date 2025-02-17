@@ -1,5 +1,4 @@
 import axios from "axios";
-import {API_URI} from "./environment";
 import z from "zod";
 
 const ErrorResponseSchema = z.object({
@@ -9,8 +8,10 @@ const ErrorResponseSchema = z.object({
     cause: z.record(z.string().min(1), z.any()).optional()
 });
 
+console.log(import.meta.env);
+
 export const API = axios.create({
-    baseURL: API_URI,
+    baseURL: import.meta.env.VITE_API_URI,
     maxContentLength: 30 * 1024 * 1024,
     maxBodyLength: 30 * 1024 * 1024,
     headers: {

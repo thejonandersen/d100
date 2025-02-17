@@ -1,22 +1,8 @@
 import * as React from 'react';
-import {
-    Box,
-    Drawer,
-    List,
-    Divider,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText
-} from '@mui/material';
-
-import {MoveToInbox, Mail} from '@mui/icons-material';
-
-import {useAppSelector, useAppDispatch} from '../state/hooks';
-import {toggle} from '../state/drawer/slice';
 import {useNavigate} from 'react-router'
 import IconResolver from './IconResolver'
-import Typography from '@mui/material/Typography'
+import {DrawerContent, Drawer, DrawerTrigger} from '@/components/ui/drawer'
+import {Button} from '@/components/ui/button'
 
 type DrawerLink = {
     label: string;
@@ -26,60 +12,71 @@ type DrawerLink = {
 }
 
 export function DrawerNav() {
-    const open = useAppSelector(state => state.drawer.status === 'open');
-    const dispatch = useAppDispatch();
-    const dispatchToggle = () => dispatch(toggle(null));
+    const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
     const links: DrawerLink[] = [
         {
             label: 'Advantages',
             uri: 'advantage',
-            icon: 'RocketLaunch',
+            icon: 'Rocket',
         },
         {
             label: 'Add Language',
             uri: 'language',
-            icon: 'RecordVoiceOver'
+            icon: 'Speech'
         },
         {
             label: 'Races',
             uri: 'race',
-            icon: 'Diversity2',
+            icon: 'Users',
         },
         {
             label: 'Characters',
             uri: 'character',
-            icon: 'Face',
+            icon: 'Puzzle',
+        },
+        {
+            label: 'Templates',
+            uri: 'character-template',
+            icon: 'Atom',
         },
         {
             label: 'Powers',
             uri: 'power',
-            icon: 'Bolt',
+            icon: 'Zap',
         },
     ]
 
-    // menu view/create/edit
+    const handleClick = (uri: string) => {
+        setOpen(false);
+        navigate(uri)
+    }
+
     return (
-        <Drawer open={open} onClose={dispatchToggle}>
-            <Box sx={{width: 250}} role="presentation">
-                <List>
+        <Drawer direction="left" open={open} onOpenChange={setOpen}>
+            <DrawerTrigger asChild>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="[&_svg]:size-6 bg-yellow-500 border-amber-900 border-2"
+                    onClick={() => setOpen(!open)}
+                >
+                    <IconResolver iconName="Menu" className="text-amber-900"/>
+                </Button>
+            </DrawerTrigger>
+            <DrawerContent className="top-0 bottom-0 fixed mt-0 w-44 rounded-none bg-yellow-500 border-none">
+                <ul>
                     {links.map((link) => (
-                        <Box key={link.label}>
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={() => navigate(link.uri)}>
-                                    <ListItemIcon>
-                                        <IconResolver iconName={link.icon}/>
-                                    </ListItemIcon>
-                                    <ListItemText primary={
-                                        <Typography variant="h6" fontWeight="bold">{link.label}</Typography>
-                                    }/>
-                                </ListItemButton>
-                            </ListItem>
-                            <Divider/>
-                        </Box>
+                        <li
+                            key={link.label}
+                            className="flex items-center m-4 cursor-pointer text-amber-900"
+                            onClick={() => handleClick(link.uri)}
+                        >
+                            <IconResolver iconName={link.icon} className="mr-3" />{link.label}
+                        </li>
                     ))}
-                </List>
-            </Box>
+                </ul>
+            </DrawerContent>
         </Drawer>
     );
 }

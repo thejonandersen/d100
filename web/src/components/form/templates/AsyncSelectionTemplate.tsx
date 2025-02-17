@@ -14,6 +14,7 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
     const {gridSize, initialData} = useContext(FormContext);
     const {handleChange, displayName} = useTemplateData({formId, name});
     const [open, setOpen] = useState<boolean>(false);
+    const [value, setValue] = useState<string|string[]>();
     const {all, load} = allSlices[props.collection as keyof Slices]
     const options: any[] = useAppSelector(all);
     const [loading, setLoading] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
 
     try {
         if (schema.description) {
-            multiple = JSON.parse(schema.description).multiple;
+            multiple = props.multiple;
         }
     } catch (e: any) {
         console.error(e.message);
@@ -41,9 +42,18 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
         setLoading(false);
     };
 
+    const onChange = (e: any) => {
+        console.log(e.target.value);
+        setValue(e.target.value);
+        handleChange(e);
+    }
+
     useEffect(() => {
-        console.log({options})
-        if (defaultValue && !options.length) {
+        if (!value && defaultValue) {
+            setValue(defaultValue);
+        }
+
+        if (!options.length) {
             dispatch(load())
         }
     }, [defaultValue, options])
@@ -60,8 +70,8 @@ export const AsyncSelectionTemplate: React.FC<AsyncSelectionTemplateProps> = ({
                     onClose={handleClose}
                     open={open}
                     multiple={multiple}
-                    onChange={handleChange}
-                    value={defaultValue ? defaultValue : multiple ? [] : ''}
+                    onChange={onChange}
+                    value={value ? value : multiple ? [] : ''}
                     variant="outlined"
                 >
                     {loading ? <CircularProgress color="inherit" size={20}/> : null}

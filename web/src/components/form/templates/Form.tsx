@@ -63,7 +63,7 @@ export const Form: React.FC<FormRootProps> = ({
                     <Button
                         variant="contained"
                         disabled={formStatus !== 'dirty' && isValid}
-                        onClick={() => submitClickHandler}
+                        onClick={submitClickHandler}
                     >Submit</Button>
                 </Box>)}
             </form>

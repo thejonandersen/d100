@@ -1,5 +1,5 @@
 import React, {ComponentPropsWithoutRef} from 'react';
-import * as Icons from '@mui/icons-material';
+import * as Icons from 'lucide-react';
 
 interface IconResolverProps {
     iconName: string,

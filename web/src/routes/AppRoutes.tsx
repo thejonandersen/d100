@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import {useEffect} from "react";
 import {Route, Routes} from "react-router";
 import {useAppSelector} from '../state/hooks';
 import {useLocation, useNavigate} from 'react-router';
@@ -23,9 +23,7 @@ export const AppRoutes = () => {
         <Container>
             <Routes>
                 <Route path="/" element={
-                    <ProtectedRoute user={user.current as User}>
-                        <Home />
-                    </ProtectedRoute>
+                    <ProtectedRoute user={user.current as User} children={<Home />} />
                 }/>
                 <Route path="/advantage" element={
                     <ProtectedRoute user={user.current as User}>

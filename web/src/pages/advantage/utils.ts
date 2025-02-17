@@ -2,18 +2,18 @@ import {AdvantageRequirement} from "d100-libs";
 import {capitalize} from "@mui/material";
 
 export const categoryIcons = {
-    "Ally_Framework": "Group",
-    "Archetype": "Category",
+    "Ally_Framework": "Users",
+    "Archetype": "Shapes",
     "Armor": "Shield",
-    "Body": "FitnessCenter",
+    "Body": "Dumbbell",
     "Divine_Pacts": "Church",
-    "Epic_Archetypes": "Insights",
-    "Golden_Path": "Hiking",
-    "Melee_Combat": "SportsKabaddi",
-    "Mind": "Psychology",
-    "Power": "Bolt",
-    "Ranged_Combat": "SportsHandball",
-    "Tactical": "TipsAndUpdates"
+    "Epic_Archetypes": "CircleAlert",
+    "Golden_Path": "Waypoints",
+    "Melee_Combat": "Axe",
+    "Mind": "Brain",
+    "Power": "Zap",
+    "Ranged_Combat": "MoveUpRight",
+    "Tactical": "Sparkles"
 };
 
 const getKeys = function (obj: any) {

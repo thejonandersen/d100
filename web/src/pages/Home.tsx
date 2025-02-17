@@ -2,5 +2,9 @@ import React from 'react'
 
 
 export const Home = () => {
-  return (<div>home</div>)
+  return (
+      <p className="text-3xl font-bold">
+        Home
+      </p>
+  )
 }

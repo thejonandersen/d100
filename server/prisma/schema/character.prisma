@@ -52,13 +52,13 @@ type PowersSkills {
 
 type CombatSkills {
   base           Int @default(0)
-  axes_and_picks Int @default(0)
-  blade          Int @default(0)
-  bludgeoning    Int @default(0)
-  natural        Int @default(0)
-  projectile     Int @default(0)
-  shield         Int @default(0)
-  staff_weapons  Int @default(0)
+  combat_axes_and_picks Int @default(0)
+  combat_blade          Int @default(0)
+  combat_bludgeoning    Int @default(0)
+  combat_natural        Int @default(0)
+  combat_projectile     Int @default(0)
+  combat_shield         Int @default(0)
+  combat_staff_weapons  Int @default(0)
 }
 
 type InteractionSkills {
@@ -118,22 +118,22 @@ enum Skill {
   insight
   navigate
   perception
-  arcana
-  nature
-  history
-  social
-  technology
+  lore_arcana
+  lore_nature
+  lore_history
+  lore_social
+  lore_technology
   chicanery
   command
   diplomacy
   fast_talking
-  axes_and_picks
-  blade
-  bludgeoning
-  natural
-  projectile
-  shield
-  staff_weapons
+  combat_axes_and_picks
+  combat_blade
+  combat_bludgeoning
+  combat_natural
+  combat_projectile
+  combat_shield
+  combat_staff_weapons
   divination
   energy
   life

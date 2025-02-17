@@ -48,10 +48,8 @@ const powersSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(load.fulfilled, (state, action) => {
-                return {
-                    status: 'idle',
-                    powers: action.payload
-                }
+                state.status = 'idle';
+                state.powers = action.payload as unknown as Power[];
             })
             .addCase(load.rejected, (state) => {
                 state.status = 'failed';

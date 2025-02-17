@@ -46,10 +46,8 @@ const languagesSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(load.fulfilled, (state, action) => {
-                return {
-                    status: 'idle',
-                    languages: action.payload
-                }
+                state.status = 'idle';
+                state.languages = action.payload as unknown as Language[];
             })
             .addCase(load.rejected, (state) => {
                 state.status = 'failed';

@@ -1,4 +1,4 @@
-import React, {Profiler, StrictMode} from "react";
+import React from "react";
 import {BrowserRouter} from "react-router";
 import {Header} from "./components/Header";
 import {DrawerNav} from "./components/DrawerNav";
@@ -9,16 +9,10 @@ import {AppRoutes} from './routes/AppRoutes'
 
 function App() {
     return (
-        <div>
-            <CssBaseline/>
+        <BrowserRouter>
             <Header/>
-            <Box className="app-content-box">
-                <BrowserRouter>
-                    <DrawerNav/>
-                    <AppRoutes/>
-                </BrowserRouter>
-            </Box>
-        </div>
+            <AppRoutes/>
+        </BrowserRouter>
     );
 }
 

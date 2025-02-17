@@ -9,4 +9,4 @@ export {Language} from './Language'
 export {Races} from './race/Races'
 export {CreateOrEditRace} from './race/CreateOrEdit';
 export {User} from './User'
-export {Login} from './Login'
+export {default as Login} from './Login'

@@ -9,7 +9,8 @@ import {useCreateOrEdit} from "../../hooks/useCreateOrEdit";
 import {costCalculator} from './costCalculator'
 import {CostDisplay} from '../../components/cost/CostDisplay'
 import preSubmitProcess from './preSubmitProcess'
-import {displayText, getRequirement} from './utils'
+import {getRequirement} from './utils'
+import {displayText} from '@/common/utils'
 
 export const CreateOrEditPower = () => {
     const {id} = useParams();

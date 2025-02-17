@@ -35,10 +35,11 @@ const useForm = ({id, submitData, submit, initialData, schema}: FormProps) => {
             return;
 
         const handler = () => () => {
+            console.log('setSubmitClickHandler', mergedData)
             if (submit) {
                 submit(mergedData);
             } else if (submitData) {
-                dispatch(submitForm({...submitData, data: mergedData}))
+                dispatch(submitForm({...submitData}))
             }
         }
 
@@ -46,6 +47,7 @@ const useForm = ({id, submitData, submit, initialData, schema}: FormProps) => {
     }, [submit, submitData]);
 
     useEffect(() => {
+        console.log({mergedData})
         if (isEqual(mergedData, cachedData))
             return;
 
